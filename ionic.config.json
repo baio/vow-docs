@@ -1,5 +1,7 @@
 {
   "name": "vow-docs",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
