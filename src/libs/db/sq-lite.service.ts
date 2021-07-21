@@ -11,15 +11,13 @@ import {
 } from '@capacitor-community/sqlite';
 import { Capacitor } from '@capacitor/core';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class SqLiteService {
   sqlite: SQLiteConnection;
   isService = false;
   platform: string;
 
-  constructor() {
-    console.log('777');
-  }
+  constructor() {}
   /**
    * Plugin Initialization
    */
