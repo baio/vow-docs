@@ -3,8 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { SqLiteService } from 'src/libs/db';
-import { YaAuthService } from 'src/libs/social-auth';
+import { SqLiteService } from '@app/db';
+import { YaAuthService } from '@app/social-auth';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { SqLiteService } from 'src/libs/db';
+import { SqLiteService } from '@app/db';
 
 import { App } from '@capacitor/app';
 
