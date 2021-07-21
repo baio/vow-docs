@@ -15,7 +15,9 @@
     "lib": ["es2018", "dom"],
     "paths": {
         "@app/social-auth": ["src/libs/social-auth/index.ts"],
-        "@app/db": ["src/libs/db/index.ts"]
+        "@app/db": ["src/libs/db/index.ts"],
+        "@app/profile": ["src/libs/profile/index.ts"],
+        "@app/secure-storage": ["src/libs/secure-storage/index.ts"]
     }    
   },
   "angularCompilerOptions": {

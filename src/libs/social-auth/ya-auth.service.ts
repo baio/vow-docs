@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
+import { App } from '@capacitor/app';
+import { PluginListenerHandle } from '@capacitor/core';
 
 const jsonToQueryString = (json) =>
   '?' +
@@ -14,9 +16,8 @@ const YA_VOW_DOCS_AUTH_STATE = 'ya';
 export class YaAuthService {
   constructor() {}
 
-  async login() {
+  async login(): Promise<string> {
     const deviceId = '123456789';
-    console.log('???!!!', deviceId);
 
     const config = {
       clientId: '7489e5aae33b4568bf21cb434060df4d',
@@ -38,21 +39,27 @@ export class YaAuthService {
     };
     const url = `https://oauth.yandex.com/authorize${jsonToQueryString(qs)}`;
 
-    const x = await Browser.open({ url });
+    await Browser.open({ url });
 
-    const listenerHandler1 = await Browser.addListener(
-      'browserPageLoaded',
-      // eslint-disable-next-line space-before-function-paren
-      () => {
-        console.log('1111', this, Browser, window.location);
-      }
-    );
+    return new Promise(async (resolve) => {
+      const handlers: PluginListenerHandle[] = [];
 
-    const listenerHandler2 = await Browser.addListener(
-      'browserFinished',
-      () => {
-        console.log('2222');
-      }
-    );
+      const removeHandlers = () => handlers.forEach((h) => h.remove());
+
+      const handler1 = await Browser.addListener('browserFinished', () => {
+        console.warn('Browser.addListener(browserFinished)');
+        removeHandlers();
+      });
+
+      handlers.push(handler1);
+
+      const handler2 = App.addListener('appUrlOpen', (data) => {
+        console.log('App opened with URL:', data);
+        removeHandlers();
+        resolve('xxxx');
+      });
+
+      handlers.push(handler2);
+    });
   }
 }

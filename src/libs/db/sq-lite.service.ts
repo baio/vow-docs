@@ -11,7 +11,7 @@ import {
 } from '@capacitor-community/sqlite';
 import { Capacitor } from '@capacitor/core';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class SqLiteService {
   sqlite: SQLiteConnection;
   isService = false;
