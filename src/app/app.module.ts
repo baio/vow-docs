@@ -1,7 +1,6 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppAuthModule } from '@app/auth';
-import { SqLiteService } from '@app/db';
+import { DbModule } from '@app/db';
 import { YaAuthService, YA_AUTH_CONFIG } from '@app/social-auth';
 import { IonicModule, Platform } from '@ionic/angular';
 import { EffectsModule } from '@ngrx/effects';
@@ -59,6 +58,7 @@ export const metaReducers = environment.production ? [] : [logger];
     IonicModule.forRoot(),
     EffectsModule.forRoot(),
     TabsPageModule,
+    DbModule,
   ],
   providers: [
     SecureStorageService,
@@ -72,7 +72,6 @@ export const metaReducers = environment.production ? [] : [logger];
       provide: YA_AUTH_CONFIG,
       useFactory: yaAuthConfigFactory,
     },
-    SqLiteService,
     YaAuthService,
   ],
   bootstrap: [AppComponent],

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SecureStorageService } from '@app/secure-storage';
 import { NativeBiometric } from 'capacitor-native-biometric';
+import { BehaviorSubject } from 'rxjs';
 import { v4 } from 'uuid';
 
 const SECURITY_KEY = 'VOW_DOCS_SECURITY_KEY';
@@ -8,7 +9,7 @@ const PIN_KEY = 'VOW_DOCS_PIN_KEY';
 
 @Injectable()
 export class AuthService {
-  isAuthenticated = false;
+  readonly isAuthenticated$ = new BehaviorSubject(false);
 
   constructor(private readonly secureStorageService: SecureStorageService) {}
 
@@ -65,6 +66,10 @@ export class AuthService {
   }
 
   setAuthenticated() {
-    this.isAuthenticated = true;
+    this.isAuthenticated$.next(true);
+  }
+
+  get isAuthenticated() {
+    return this.isAuthenticated$.value;
   }
 }
