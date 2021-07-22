@@ -1,13 +1,10 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import {
   ActionSheetController,
   IonSelect,
@@ -15,8 +12,8 @@ import {
   ModalController,
 } from '@ionic/angular';
 import { Store } from '@ngrx/store';
-import { Observable, of, Subject } from 'rxjs';
-import { map, switchMap, takeUntil, takeWhile, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { Doc, DocView } from '../../models';
 import {
   addDocTag,
@@ -153,7 +150,9 @@ export class AppDocWorkspaceComponent implements OnInit {
     this.store.dispatch(setDocComment({ id: doc.id, comment }));
   }
 
-  onUpload(doc: Doc) {
+  onCloudUpload(doc: Doc) {
     this.store.dispatch(uploadDoc({ doc }));
   }
+
+  onCloudRemove(doc: Doc) {}
 }

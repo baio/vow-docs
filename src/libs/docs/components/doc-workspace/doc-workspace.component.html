@@ -16,9 +16,6 @@
       <ion-fab-button color="secondary" (click)="onViewImage(view.doc)"
         ><ion-icon name="eye-outline"></ion-icon
       ></ion-fab-button>
-      <ion-fab-button color="primary" (click)="onUpload(view.doc)"
-        ><ion-icon name="cloud-outline"></ion-icon
-      ></ion-fab-button>
     </ion-fab-list>
     <ion-fab-list side="top">
       <ion-fab-button color="danger" (click)="onDelete(view.doc)"
@@ -26,6 +23,20 @@
       </ion-fab-button>
       <ion-fab-button color="primary" (click)="onEdit(view.doc)"
         ><ion-icon name="create-outline"></ion-icon
+      ></ion-fab-button>
+      <ion-fab-button
+        *ngIf="!view.doc.stored || view.doc.stored.status === 'error'"
+        (click)="onCloudUpload(view.doc)"
+        ><ion-icon name="cloud-offline-outline"></ion-icon
+      ></ion-fab-button>
+      <ion-fab-button *ngIf="view.doc.stored?.status === 'progress'" disabled
+        ><ion-icon name="cloud-upload-outline"></ion-icon
+      ></ion-fab-button>
+      <ion-fab-button
+        *ngIf="view.doc.stored?.status === 'success'"
+        disabled
+        (click)="onCloudRemove(view.doc)"
+        ><ion-icon name="cloud-outline"></ion-icon
       ></ion-fab-button>
     </ion-fab-list>
   </ion-fab>
