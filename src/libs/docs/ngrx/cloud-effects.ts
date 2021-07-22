@@ -23,6 +23,7 @@ import {
   uploadCloudDocSuccess,
 } from './actions';
 import { selectDoc } from './selectors';
+import { formatCloudText } from './utils/cloud-text';
 
 @Injectable()
 export class CloudEffects {
@@ -40,14 +41,23 @@ export class CloudEffects {
   uploadDocument$ = createEffect(() =>
     this.actions$.pipe(
       ofType(uploadCloudDoc),
-      switchMap(({ doc, socialAuthState }) =>
-        this.yaDisk
-          .uploadImage(socialAuthState.token, doc.imgBase64, `${doc.id}.jpeg`)
+      switchMap(({ doc, socialAuthState }) => {
+        const cloudText = formatCloudText(doc);
+        return this.yaDisk
+          .uploadDocument({
+            token: socialAuthState.token,
+            imageBase64: doc.imgBase64,
+            imgFileName: `${doc.id}.jpeg`,
+            text: cloudText,
+            textFileName: `${doc.id}.txt`,
+          })
           .pipe(
-            map((url) => uploadCloudDocSuccess({ doc, url })),
+            map(({ imageFileUrl }) =>
+              uploadCloudDocSuccess({ doc, url: imageFileUrl })
+            ),
             catchError((error) => of(uploadCloudDocError({ error, doc })))
-          )
-      )
+          );
+      })
     )
   );
 
@@ -69,10 +79,16 @@ export class CloudEffects {
     this.actions$.pipe(
       ofType(removeCloudDoc),
       switchMap(({ id, socialAuthState }) =>
-        this.yaDisk.removeImage(socialAuthState.token, `${id}.jpeg`).pipe(
-          map((url) => removeCloudDocSuccess({ id })),
-          catchError((error) => of(removeCloudDocError({ error, id })))
-        )
+        this.yaDisk
+          .removeFiles({
+            token: socialAuthState.token,
+            imgFileName: `${id}.jpeg`,
+            textFileName: `${id}.txt`,
+          })
+          .pipe(
+            map(() => removeCloudDocSuccess({ id })),
+            catchError((error) => of(removeCloudDocError({ error, id })))
+          )
       )
     )
   );

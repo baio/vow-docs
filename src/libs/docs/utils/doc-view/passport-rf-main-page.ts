@@ -2,7 +2,7 @@ import { DocPassportRFMainPage, DocView } from '../../models';
 import { format } from 'date-fns';
 
 export const passportRFMainPage = (doc: DocPassportRFMainPage): DocView => ({
-    title: 'Гражданский Пасспорт РФ (главная)',
+    title: 'Гражданский Пасспорт РФ',
     fields: [
         {
             label: 'Фамилия Имя Очество',
