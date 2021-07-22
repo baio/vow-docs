@@ -80,7 +80,7 @@ export const setDocComment = createAction(
 
 export const uploadCloudDoc = createAction(
   '[Docs] Upload Cloud Doc',
-  props<{ doc: Doc; date: number; socialAuthState: SocialAuthState }>()
+  props<{ doc: Doc; date: number }>()
 );
 
 export const uploadCloudDocSuccess = createAction(
@@ -95,7 +95,7 @@ export const uploadCloudDocError = createAction(
 
 export const removeCloudDoc = createAction(
   '[Docs] Remove Cloud Doc',
-  props<{ id: string; socialAuthState: SocialAuthState }>()
+  props<{ id: string }>()
 );
 
 export const removeCloudDocSuccess = createAction(

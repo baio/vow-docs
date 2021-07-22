@@ -91,11 +91,11 @@ export const docsReducer = createReducer(
       return state;
     }
   }),
-  on(uploadCloudDoc, (state, { doc, date, socialAuthState }) =>
+  on(uploadCloudDoc, (state, { doc, date }) =>
     assocPath(
       ['docs', doc.id, 'stored'],
       {
-        provider: socialAuthState.provider,
+        provider: null,
         url: null,
         status: 'progress',
         date,

@@ -26,7 +26,7 @@
       ></ion-fab-button>
       <ion-fab-button
         *ngIf="!view.doc.stored || view.doc.stored.status === 'error'"
-        (click)="onCloudUpload(view.doc, view.socialAuthState)"
+        (click)="onCloudUpload(view.doc)"
         ><ion-icon name="cloud-offline-outline"></ion-icon
       ></ion-fab-button>
       <ion-fab-button
@@ -35,7 +35,7 @@
           view.doc.stored?.status === 'success'
         "
         [disabled]="view.doc.stored?.status === 'progress'"
-        (click)="onCloudRemove(view.doc, view.socialAuthState)"
+        (click)="onCloudRemove(view.doc)"
         ><ion-icon
           [name]="
             view.doc.stored?.status === 'progress'

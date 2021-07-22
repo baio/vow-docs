@@ -41,11 +41,13 @@ export class CloudEffects {
   uploadDocument$ = createEffect(() =>
     this.actions$.pipe(
       ofType(uploadCloudDoc),
-      switchMap(({ doc, socialAuthState }) => {
+      withLatestFrom(this.token$),
+      filter(([_, token]) => !!token),
+      switchMap(([{ doc }, token]) => {
         const cloudText = formatCloudText(doc);
         return this.yaDisk
           .uploadDocument({
-            token: socialAuthState.token,
+            token,
             imageBase64: doc.imgBase64,
             imgFileName: `${doc.id}.jpeg`,
             text: cloudText,
@@ -78,10 +80,12 @@ export class CloudEffects {
   removeDocument$ = createEffect(() =>
     this.actions$.pipe(
       ofType(removeCloudDoc),
-      switchMap(({ id, socialAuthState }) =>
+      withLatestFrom(this.token$),
+      filter(([_, token]) => !!token),
+      switchMap(([{ id }, token]) =>
         this.yaDisk
           .removeFiles({
-            token: socialAuthState.token,
+            token,
             imgFileName: `${id}.jpeg`,
             textFileName: `${id}.txt`,
           })

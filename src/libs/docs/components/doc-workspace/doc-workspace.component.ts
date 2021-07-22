@@ -35,7 +35,6 @@ import { docFormattedToView } from '../../utils';
 export interface UploadImageModalView {
   doc: Doc;
   docView: DocView;
-  socialAuthState: SocialAuthState;
 }
 
 @Component({
@@ -61,14 +60,11 @@ export class AppDocWorkspaceComponent implements OnInit {
 
   ngOnInit() {
     const id$ = of(this.documentId);
-    const socialAuthState$ = this.store.select(selectSocialAuthState);
     this.view$ = id$.pipe(
       switchMap((id) => this.store.select(selectDoc(id))),
-      withLatestFrom(socialAuthState$),
-      map(([doc, socialAuthState]) => ({
+      map((doc) => ({
         doc,
         docView: doc.formatted ? docFormattedToView(doc.formatted) : null,
-        socialAuthState,
       }))
     );
   }
@@ -157,13 +153,11 @@ export class AppDocWorkspaceComponent implements OnInit {
     this.store.dispatch(setDocComment({ id: doc.id, comment }));
   }
 
-  onCloudUpload(doc: Doc, socialAuthState: SocialAuthState) {
-    this.store.dispatch(
-      uploadCloudDoc({ doc, socialAuthState, date: new Date().getTime() })
-    );
+  onCloudUpload(doc: Doc) {
+    this.store.dispatch(uploadCloudDoc({ doc, date: new Date().getTime() }));
   }
 
-  onCloudRemove(doc: Doc, socialAuthState: SocialAuthState) {
-    this.store.dispatch(removeCloudDoc({ id: doc.id, socialAuthState }));
+  onCloudRemove(doc: Doc) {
+    this.store.dispatch(removeCloudDoc({ id: doc.id }));
   }
 }
