@@ -19,3 +19,8 @@ export const profileSocialLoginSuccess = createAction(
 );
 
 export const profileSocialLogout = createAction('[Profile] Social Logout');
+
+export const setUploadToCloudAutomatically = createAction(
+  '[Profile] Set Upload To Cloud Automatically',
+  props<{ uploadToCloudAutomatically: boolean }>()
+);

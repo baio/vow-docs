@@ -5,6 +5,12 @@ export interface SocialAuthState {
   token: string;
 }
 
-export interface UserAuthState {
+export interface ProfileConfig {
+  uploadToCloudAutomatically: boolean;
+  extractImageDataAutomatically: boolean;
+}
+
+export interface ProfileState {
   socialAuthState: SocialAuthState | null;
+  config: ProfileConfig;
 }

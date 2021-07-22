@@ -1,14 +1,19 @@
 import { createReducer, on } from '@ngrx/store';
-import { assoc } from 'lodash/fp';
-import { UserAuthState } from '../models';
+import { assoc, assocPath } from 'lodash/fp';
+import { ProfileState } from '../models';
 import {
   profileRehydrateSuccess,
   profileSocialLoginSuccess,
   profileSocialLogout,
+  setUploadToCloudAutomatically,
 } from './actions';
 
-export const initialState: UserAuthState = {
+export const initialState: ProfileState = {
   socialAuthState: null,
+  config: {
+    uploadToCloudAutomatically: false,
+    extractImageDataAutomatically: false,
+  },
 };
 
 export const profileReducer = createReducer(
@@ -21,5 +26,12 @@ export const profileReducer = createReducer(
   ),
   on(profileSocialLogout, (state) =>
     assoc('socialAuthState', null as any, state)
+  ),
+  on(setUploadToCloudAutomatically, (state, { uploadToCloudAutomatically }) =>
+    assocPath(
+      ['config', 'uploadToCloudAutomatically'],
+      uploadToCloudAutomatically,
+      state
+    )
   )
 );
