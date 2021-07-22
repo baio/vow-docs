@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { SocialAuthState } from 'src/libs/profile/models';
 import { Doc, DocFormatted, DocState } from '../models';
 
 export const rehydrateDocs = createAction('[Docs] Rehydrate Docs');
@@ -77,17 +78,32 @@ export const setDocComment = createAction(
   props<{ id: string; comment: string }>()
 );
 
-export const uploadDoc = createAction(
-  '[Docs] Upload Doc',
-  props<{ doc: Doc }>()
+export const uploadCloudDoc = createAction(
+  '[Docs] Upload Cloud Doc',
+  props<{ doc: Doc; date: number; socialAuthState: SocialAuthState }>()
 );
 
-export const uploadDocSuccess = createAction(
-  '[Docs] Upload Doc Success',
-  props<{ doc: Doc }>()
+export const uploadCloudDocSuccess = createAction(
+  '[Docs] Upload Cloud Doc Success',
+  props<{ doc: Doc; url: string }>()
 );
 
-export const uploadDocError = createAction(
-  '[Docs] Upload Doc Error',
+export const uploadCloudDocError = createAction(
+  '[Docs] Upload Cloud Doc Error',
   props<{ doc: Doc; error: any }>()
+);
+
+export const removeCloudDoc = createAction(
+  '[Docs] Remove Cloud Doc',
+  props<{ id: string; socialAuthState: SocialAuthState }>()
+);
+
+export const removeCloudDocSuccess = createAction(
+  '[Docs] Remove Cloud Doc Success',
+  props<{ id: string }>()
+);
+
+export const removeCloudDocError = createAction(
+  '[Docs] Remove Cloud Doc Error',
+  props<{ id: string; error: any }>()
 );

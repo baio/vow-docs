@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS docs (
     imgBase64 TEXT,
     storedProvider TEXT,
     storedUrl TEXT,
+    storedStatus TEXT,
     parsedWords TEXT,
     labeledLabel TEXT,
     content TEXT,
@@ -18,5 +19,5 @@ CREATE TABLE IF NOT EXISTS tags (
     createDate TEXT
 );
 
-PRAGMA user_version = 1;
+PRAGMA user_version = 2;
 `;

@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { DbService } from '../../db';
-import { Doc, DocFormatted, DocPassportRFMainPage, DocState } from '../models';
+import {
+  Doc,
+  DocFormatted,
+  DocPassportRFMainPage,
+  DocState,
+  DocStored,
+} from '../models';
 
 const getDocFormattedPassportRFMainPageUpdateValues = (
   data: DocPassportRFMainPage
@@ -34,10 +40,11 @@ export class DocsRepositoryService {
 
   async updateDocState(id: string, docState: DocState) {
     // add one user with statement and values
-    const sqlcmd = `UPDATE docs SET storedProvider = ?, storedUrl = ?, parsedWords = ?, labeledLabel = ? WHERE id = ?`;
+    const sqlcmd = `UPDATE docs SET storedProvider = ?, storedUrl = ?, storedStatus = ?, parsedWords = ?, labeledLabel = ? WHERE id = ?`;
     const values = [
       docState.stored?.provider,
       docState.stored?.url,
+      docState.stored?.status,
       docState.parsed?.words && docState.parsed?.words.join(','),
       docState.labeled?.label,
       id,
@@ -72,6 +79,15 @@ export class DocsRepositoryService {
         console.warn('updateDocFormatted values not found !!!', docFormatted);
       }
     }
+  }
+
+  async updateDocStored(id: string, docStored: DocStored) {
+    // add one user with statement and values
+    const sqlcmd = `UPDATE docs SET storedProvider = ?, storedUrl = ?, storedStatus = ? WHERE id = ?`;
+    const values = [docStored?.provider, docStored?.url, docStored?.status, id];
+
+    const res = await this.db.runCommand(sqlcmd, values);
+    console.log('$$$ updateDocState result', res);
   }
 
   async setDocTags(id: string, tags: string[]) {
@@ -112,6 +128,7 @@ export class DocsRepositoryService {
             ? {
                 provider: m.storedProvider,
                 url: m.storedUrl,
+                status: m.storedStatus,
               }
             : null,
           parsed: m.parsedWords

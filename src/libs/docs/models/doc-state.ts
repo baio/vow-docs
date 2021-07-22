@@ -4,6 +4,7 @@ export interface DocStored {
   provider: 'yandex';
   url: string;
   status: DocStoredStatus;
+  date: number;
 }
 
 export interface DocParsed {

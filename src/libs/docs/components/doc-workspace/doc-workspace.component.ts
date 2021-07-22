@@ -5,6 +5,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { selectSocialAuthState } from '@app/profile';
 import {
   ActionSheetController,
   IonSelect,
@@ -13,18 +14,20 @@ import {
 } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { SocialAuthState } from 'src/libs/profile/models';
 import { Doc, DocView } from '../../models';
 import {
   addDocTag,
   copyClipboard,
   deleteDoc,
   editDoc,
+  removeCloudDoc,
   removeDocTag,
   setDocComment,
   shareDoc,
   showFullScreenImage,
-  uploadDoc,
+  uploadCloudDoc,
 } from '../../ngrx/actions';
 import { selectDoc } from '../../ngrx/selectors';
 import { docFormattedToView } from '../../utils';
@@ -32,6 +35,7 @@ import { docFormattedToView } from '../../utils';
 export interface UploadImageModalView {
   doc: Doc;
   docView: DocView;
+  socialAuthState: SocialAuthState;
 }
 
 @Component({
@@ -57,11 +61,14 @@ export class AppDocWorkspaceComponent implements OnInit {
 
   ngOnInit() {
     const id$ = of(this.documentId);
+    const socialAuthState$ = this.store.select(selectSocialAuthState);
     this.view$ = id$.pipe(
       switchMap((id) => this.store.select(selectDoc(id))),
-      map((doc) => ({
+      withLatestFrom(socialAuthState$),
+      map(([doc, socialAuthState]) => ({
         doc,
         docView: doc.formatted ? docFormattedToView(doc.formatted) : null,
+        socialAuthState,
       }))
     );
   }
@@ -150,9 +157,13 @@ export class AppDocWorkspaceComponent implements OnInit {
     this.store.dispatch(setDocComment({ id: doc.id, comment }));
   }
 
-  onCloudUpload(doc: Doc) {
-    this.store.dispatch(uploadDoc({ doc }));
+  onCloudUpload(doc: Doc, socialAuthState: SocialAuthState) {
+    this.store.dispatch(
+      uploadCloudDoc({ doc, socialAuthState, date: new Date().getTime() })
+    );
   }
 
-  onCloudRemove(doc: Doc) {}
+  onCloudRemove(doc: Doc, socialAuthState: SocialAuthState) {
+    this.store.dispatch(removeCloudDoc({ id: doc.id, socialAuthState }));
+  }
 }

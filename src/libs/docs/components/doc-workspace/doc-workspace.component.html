@@ -26,17 +26,23 @@
       ></ion-fab-button>
       <ion-fab-button
         *ngIf="!view.doc.stored || view.doc.stored.status === 'error'"
-        (click)="onCloudUpload(view.doc)"
+        (click)="onCloudUpload(view.doc, view.socialAuthState)"
         ><ion-icon name="cloud-offline-outline"></ion-icon
       ></ion-fab-button>
-      <ion-fab-button *ngIf="view.doc.stored?.status === 'progress'" disabled
-        ><ion-icon name="cloud-upload-outline"></ion-icon
-      ></ion-fab-button>
       <ion-fab-button
-        *ngIf="view.doc.stored?.status === 'success'"
-        disabled
-        (click)="onCloudRemove(view.doc)"
-        ><ion-icon name="cloud-outline"></ion-icon
+        *ngIf="
+          view.doc.stored?.status === 'progress' ||
+          view.doc.stored?.status === 'success'
+        "
+        [disabled]="view.doc.stored?.status === 'progress'"
+        (click)="onCloudRemove(view.doc, view.socialAuthState)"
+        ><ion-icon
+          [name]="
+            view.doc.stored?.status === 'progress'
+              ? 'cloud-upload-outline'
+              : 'cloud-outline'
+          "
+        ></ion-icon
       ></ion-fab-button>
     </ion-fab-list>
   </ion-fab>
