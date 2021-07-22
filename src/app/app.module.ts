@@ -1,18 +1,17 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
 import { SqLiteService } from '@app/db';
 import { YaAuthService, YA_AUTH_CONFIG } from '@app/social-auth';
-import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
+import { IonicModule, Platform } from '@ionic/angular';
+import { EffectsModule } from '@ngrx/effects';
 import { ActionReducer, StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { storeLogger } from 'ngrx-store-logger';
 import { SecureStorageService } from 'src/libs/secure-storage/secure-storage.service';
 import { v4 } from 'uuid';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { storeLogger } from 'ngrx-store-logger';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 const DEVICE_ID_STORAGE_KEY = 'DEVICE_ID';
 

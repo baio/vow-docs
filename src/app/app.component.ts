@@ -1,8 +1,8 @@
-import { AfterViewInit, Component } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Component } from '@angular/core';
 import { SqLiteService } from '@app/db';
-import { Store } from '@ngrx/store';
 import { appStarted } from '@app/shared';
+import { Platform } from '@ionic/angular';
+import { Store } from '@ngrx/store';
 
 //import { App } from '@capacitor/app';
 
@@ -11,7 +11,7 @@ import { appStarted } from '@app/shared';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent {
   constructor(
     private readonly sqLiteService: SqLiteService,
     private readonly platform: Platform,
@@ -28,11 +28,9 @@ export class AppComponent implements AfterViewInit {
       const res = await this.sqLiteService.echo('Hello World');
       console.log('$$$ from Echo ' + res.value);
 
-      this.store.dispatch(appStarted());
+      // TODO
+      // Give chance to all effects in all modules to be created
+      setTimeout(() => this.store.dispatch(appStarted()), 500);
     });
-  }
-
-  ngAfterViewInit() {
-    console.log('222');
   }
 }

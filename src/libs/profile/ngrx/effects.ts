@@ -26,7 +26,7 @@ export class ProfileEffects {
     private readonly yaAuthService: YaAuthService,
     private readonly secureStorageService: SecureStorageService
   ) {
-    console.log('wtf ???');
+    console.log('??? ProfileEffects');
   }
 
   appStarted$ = createEffect(() =>

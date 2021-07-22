@@ -27,4 +27,8 @@ export class AppProfileSocialProvidersComponent {
     console.log($event);
     this.selectedProviderChange.emit($event.detail.value);
   }
+
+  onSelect(value: SocialAuthProviderWithOffline) {
+    this.selectedProviderChange.emit(value);
+  }
 }
