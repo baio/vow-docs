@@ -2,7 +2,6 @@ export const base64Str2Blob = (b64Data: string, contentType = 'image/jpeg') => {
     if (b64Data.split(',').length > 1) {
         b64Data = b64Data.split(',')[1];
     }
-    console.log('???', b64Data);
     const sliceSize = 512;
     const byteCharacters = atob(b64Data);
     const byteArrays = [];
