@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { SecureStorageService } from '@app/secure-storage';
 import { appStarted } from '@app/shared';
 import { YaAuthService } from '@app/social-auth';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { EMPTY } from 'rxjs';
-import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, NEVER } from 'rxjs';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { SocialAuthProvider } from '../models';
 import {
   profileRehydrate,
@@ -44,13 +43,14 @@ export class ProfileEffects {
           case 'yandex':
             return this.yaAuthService
               .login()
-              .then((token) => ({ token, provider }));
+              .then((token) => ({ token, provider }))
+              .catch(() => null);
           default:
-            throw new Error(`provider is not found, ${provider}`);
+            return null;
         }
       }),
-      map((socialAuthState) => profileSocialLoginSuccess({ socialAuthState })),
-      catchError(() => EMPTY)
+      filter((f) => !!f),
+      map((socialAuthState) => profileSocialLoginSuccess({ socialAuthState }))
     )
   );
 

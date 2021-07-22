@@ -28,7 +28,9 @@ export class AppProfileSocialProvidersComponent {
     this.selectedProviderChange.emit($event.detail.value);
   }
 
-  onSelect(value: SocialAuthProviderWithOffline) {
+  onSelect($event: MouseEvent, value: SocialAuthProviderWithOffline) {
+    $event.preventDefault();
+    $event.stopPropagation();
     this.selectedProviderChange.emit(value);
   }
 }

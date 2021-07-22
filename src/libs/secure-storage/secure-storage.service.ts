@@ -19,7 +19,12 @@ export class SecureStorageService {
     }
   }
 
-  removeValue(key: string) {
-    return Promise.resolve(null);
+  async removeValue(key: string) {
+    try {
+      const result = await SecureStoragePlugin.remove({ key });
+      return result.value;
+    } catch {
+      return null;
+    }
   }
 }

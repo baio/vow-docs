@@ -4,12 +4,12 @@
       <ion-label> Сохранение документов в облаке </ion-label>
     </ion-list-header>
 
-    <ion-item (click)="onSelect('offline')">
+    <ion-item (click)="onSelect($event, 'offline')">
       <ion-label>Не использовать</ion-label>
       <ion-radio value="offline"></ion-radio>
     </ion-item>
 
-    <ion-item (click)="onSelect('yandex')">
+    <ion-item (click)="onSelect($event, 'yandex')">
       <ion-label>Yandex</ion-label>
       <ion-radio value="yandex"></ion-radio>
     </ion-item>
