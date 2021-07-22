@@ -1,5 +1,6 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { AppAuthModule } from '@app/auth';
 import { SqLiteService } from '@app/db';
 import { YaAuthService, YA_AUTH_CONFIG } from '@app/social-auth';
 import { IonicModule, Platform } from '@ionic/angular';
@@ -67,7 +68,6 @@ export const metaReducers = environment.production ? [] : [logger];
       deps: [Platform, SecureStorageService],
       multi: true,
     },
-    // { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: YA_AUTH_CONFIG,
       useFactory: yaAuthConfigFactory,

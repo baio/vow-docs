@@ -18,7 +18,8 @@
         "@app/db": ["src/libs/db/index.ts"],
         "@app/profile": ["src/libs/profile/index.ts"],
         "@app/secure-storage": ["src/libs/secure-storage/index.ts"],
-        "@app/shared": ["src/libs/shared/index.ts"]
+        "@app/shared": ["src/libs/shared/index.ts"],
+        "@app/auth": ["src/libs/auth/index.ts"]
     }    
   },
   "angularCompilerOptions": {
