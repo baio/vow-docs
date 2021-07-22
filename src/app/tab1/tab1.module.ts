@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Tab1Page } from './tab1.page';
 
 import { Routes } from '@angular/router';
-
+import { AppDocsModule } from '@app/docs';
 
 export const tab1Routes: Routes = [
   {
@@ -15,7 +15,7 @@ export const tab1Routes: Routes = [
 ];
 
 @NgModule({
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [IonicModule, CommonModule, FormsModule, AppDocsModule],
   declarations: [Tab1Page],
 })
 export class Tab1PageModule {}

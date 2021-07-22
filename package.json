@@ -27,6 +27,7 @@
     "@capacitor/camera": "^1.0.3",
     "@capacitor/clipboard": "^1.0.2",
     "@capacitor/core": "3.1.1",
+    "@capacitor/filesystem": "^1.0.2",
     "@capacitor/haptics": "1.0.2",
     "@capacitor/keyboard": "1.0.2",
     "@capacitor/share": "^1.0.3",
