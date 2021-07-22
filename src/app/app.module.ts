@@ -12,6 +12,7 @@ import { v4 } from 'uuid';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { TabsPageModule } from './tabs/tabs.module';
 
 const DEVICE_ID_STORAGE_KEY = 'DEVICE_ID';
 
@@ -56,6 +57,7 @@ export const metaReducers = environment.production ? [] : [logger];
     StoreDevtoolsModule.instrument(),
     IonicModule.forRoot(),
     EffectsModule.forRoot(),
+    TabsPageModule,
   ],
   providers: [
     SecureStorageService,

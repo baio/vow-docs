@@ -28,9 +28,7 @@ export class AppComponent {
       const res = await this.sqLiteService.echo('Hello World');
       console.log('$$$ from Echo ' + res.value);
 
-      // TODO
-      // Give chance to all effects in all modules to be created
-      setTimeout(() => this.store.dispatch(appStarted()), 500);
+      this.store.dispatch(appStarted());
     });
   }
 }
