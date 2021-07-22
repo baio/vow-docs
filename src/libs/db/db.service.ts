@@ -12,13 +12,14 @@ export class DbService {
     if (this.db) {
       throw new Error('Db is already initialized');
     }
-    const dbName = 'testEncryption';
+    const dbName = 'vowdocs';
 
     await this.sqLite.checkConnectionsConsistency();
-    this.sqLite.sqlite.setEncryptionSecret('secretKey');
+    await this.sqLite.sqlite.setEncryptionSecret(secretKey);
     this.db = await this.sqLite.createConnection(dbName, true, 'secret', 1);
 
-    // await this.db.delete();
+    //await this.db.delete();
+
     await this.db.open();
 
     // create tables in db
