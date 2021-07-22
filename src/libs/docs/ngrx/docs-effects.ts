@@ -44,7 +44,7 @@ export class DocsEffects {
     private readonly docRepository: DocsRepositoryService,
     private readonly router: Router,
     private readonly toastController: ToastController,
-    private readonly store: Store
+    private readonly store: Store,
   ) {}
 
   appStart$ = createEffect(() =>

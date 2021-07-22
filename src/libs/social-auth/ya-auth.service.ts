@@ -28,17 +28,6 @@ export class YaAuthService {
   constructor(@Inject(YA_AUTH_CONFIG) private readonly config: YaAuthConfig) {}
 
   async login(): Promise<string> {
-    //const deviceId = '123456789';
-
-    /*
-    const config = {
-      clientId: '7489e5aae33b4568bf21cb434060df4d',
-      redirectUrl: 'io.ionic.starter://login',
-      scope:
-        'cloud_api:disk.app_folder cloud_api:disk.read cloud_api:disk.write cloud_api:disk.info',
-    };
-    */
-
     const qs = {
       response_type: 'token',
       client_id: this.config.clientId,
