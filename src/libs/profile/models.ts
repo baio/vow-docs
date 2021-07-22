@@ -1,7 +1,7 @@
-export type AuthProvider = 'yandex';
+export type SocialAuthProvider = 'yandex';
 
 export interface SocialAuthState {
-  provider: AuthProvider;
+  provider: SocialAuthProvider;
   token: string;
 }
 

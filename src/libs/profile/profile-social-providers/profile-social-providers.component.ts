@@ -2,9 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  Input,
   Output,
 } from '@angular/core';
-import { AuthProvider } from '../models';
+import { SocialAuthProvider } from '../models';
+
+export type SocialAuthProviderWithOffline = SocialAuthProvider | 'offline';
 
 @Component({
   selector: 'app-profile-social-providers',
@@ -13,7 +16,15 @@ import { AuthProvider } from '../models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppProfileSocialProvidersComponent {
-  @Output() login = new EventEmitter<AuthProvider>();
+  @Input() selectedProvider: SocialAuthProviderWithOffline;
+
+  @Output() selectedProviderChange =
+    new EventEmitter<SocialAuthProviderWithOffline>();
 
   constructor() {}
+
+  onChange($event: any) {
+    console.log($event);
+    this.selectedProviderChange.emit($event.detail.value);
+  }
 }

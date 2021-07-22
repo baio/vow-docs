@@ -1,24 +1,21 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SqLiteService } from '@app/db';
+import { Store } from '@ngrx/store';
+import { appStarted } from '@app/shared';
 
-import { App } from '@capacitor/app';
-
-const checkAppLaunchUrl = async () => {
-  const { url } = await App.getLaunchUrl();
-
-  alert('App opened with URL: ' + url);
-};
+//import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   constructor(
     private readonly sqLiteService: SqLiteService,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly store: Store
   ) {
     this.initializeApp();
   }
@@ -31,17 +28,11 @@ export class AppComponent {
       const res = await this.sqLiteService.echo('Hello World');
       console.log('$$$ from Echo ' + res.value);
 
-      App.addListener('appStateChange', ({ isActive }) => {
-        console.log('App state changed. Is active?', isActive);
-      });
-
-      App.addListener('appUrlOpen', (data) => {
-        console.log('App opened with URL:', data);
-      });
-
-      App.addListener('appRestoredResult', (data) => {
-        console.log('Restored state:', data);
-      });
+      this.store.dispatch(appStarted());
     });
+  }
+
+  ngAfterViewInit() {
+    console.log('222');
   }
 }

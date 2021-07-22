@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { YaAuthService } from '@app/social-auth';
 import { IonicModule } from '@ionic/angular';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { AuthEffects } from './ngrx/effects';
+import { ProfileEffects } from './ngrx/effects';
 import { profileReducer } from './ngrx/reducer';
 import { AppProfileSocialProvidersComponent } from './profile-social-providers/profile-social-providers.component';
 import { AppProfileWorkspaceComponent } from './profile-workspace/profile-workspace.component';
@@ -14,12 +14,13 @@ import { AppProfileWorkspaceComponent } from './profile-workspace/profile-worksp
     IonicModule,
     CommonModule,
     StoreModule.forFeature('profile', profileReducer),
-    EffectsModule.forFeature([AuthEffects]),
+    EffectsModule.forFeature([ProfileEffects]),
   ],
   declarations: [
     AppProfileSocialProvidersComponent,
     AppProfileWorkspaceComponent,
   ],
   providers: [YaAuthService],
+  exports: [AppProfileWorkspaceComponent],
 })
 export class AppProfileModule {}

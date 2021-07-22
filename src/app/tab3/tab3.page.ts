@@ -7,9 +7,5 @@ import { YaAuthService } from 'src/libs/social-auth';
   styleUrls: ['tab3.page.scss'],
 })
 export class Tab3Page {
-  constructor(private readonly yaAuthService: YaAuthService) {}
-
-  onLogin(provider: 'yandex') {
-    this.yaAuthService.login();
-  }
+  constructor() {}
 }

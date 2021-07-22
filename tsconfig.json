@@ -17,7 +17,8 @@
         "@app/social-auth": ["src/libs/social-auth/index.ts"],
         "@app/db": ["src/libs/db/index.ts"],
         "@app/profile": ["src/libs/profile/index.ts"],
-        "@app/secure-storage": ["src/libs/secure-storage/index.ts"]
+        "@app/secure-storage": ["src/libs/secure-storage/index.ts"],
+        "@app/shared": ["src/libs/shared/index.ts"]
     }    
   },
   "angularCompilerOptions": {

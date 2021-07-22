@@ -1,17 +1,25 @@
 import { Injectable } from '@angular/core';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 @Injectable({ providedIn: 'root' })
-export class SecureStorage {
+export class SecureStorageService {
   setValue(key: string, value: string) {
-    return Promise.resolve(null);
+    return SecureStoragePlugin.set({
+      key,
+      value,
+    });
   }
 
-  getValue(key: string) {
-    return Promise.resolve(key);
+  async getValue(key: string) {
+    try {
+      const result = await SecureStoragePlugin.get({ key });
+      return result.value;
+    } catch {
+      return null;
+    }
   }
 
   removeValue(key: string) {
     return Promise.resolve(null);
   }
-
 }

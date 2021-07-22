@@ -1,1 +1,17 @@
-<ion-button expand="block" (click)="login.emit('yandex')">Yandex</ion-button>
+<ion-list>
+  <ion-radio-group [value]="selectedProvider" (ionChange)="onChange($event)">
+    <ion-list-header>
+      <ion-label> Сохранение документов в облаке </ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-label>Не использовать</ion-label>
+      <ion-radio value="offline"></ion-radio>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Yandex</ion-label>
+      <ion-radio value="yandex"></ion-radio>
+    </ion-item>
+  </ion-radio-group>
+</ion-list>

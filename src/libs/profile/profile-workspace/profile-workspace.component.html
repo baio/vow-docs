@@ -1,3 +1,6 @@
-<app-profile-social-providers
-  (login)="onLogin($event)"
-></app-profile-social-providers>
+<ng-container *ngIf="view$ | async as view">
+  <app-profile-social-providers
+    [selectedProvider]="view.socialAuthProvider"
+    (selectedProviderChange)="onSelectedProviderChange($event)"
+  ></app-profile-social-providers>
+</ng-container>
