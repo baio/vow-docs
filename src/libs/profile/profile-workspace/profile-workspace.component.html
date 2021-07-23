@@ -3,4 +3,5 @@
     [selectedProvider]="view.socialAuthProvider"
     (selectedProviderChange)="onSelectedProviderChange($event)"
   ></app-profile-social-providers>
+  <app-profile-config [config]="view.config" (configChange)="onConfigChange($event)"> </app-profile-config>
 </ng-container>

@@ -1,0 +1,11 @@
+<ion-list>
+  <ion-item>
+    <ion-label>Загружать в облако</ion-label>
+    <ion-toggle
+      slot="start"
+      name="autoCloudUpload"
+      [checked]="config?.uploadToCloudAutomatically"
+      (ionChange)="onChange($event)"
+    ></ion-toggle>
+  </ion-item>
+</ion-list>

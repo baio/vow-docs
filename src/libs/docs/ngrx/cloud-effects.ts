@@ -112,13 +112,13 @@ export class CloudEffects {
   uploadDocumentConfirmed$ = createEffect(() =>
     this.actions$.pipe(
       ofType(uploadCloudDocConfirmed),
-      withLatestFrom(this.token$),
-      filter(([_, token]) => !!token),
-      switchMap(([{ doc }, token]) => {
+      withLatestFrom(this.store.select(selectSocialAuthState)),
+      filter(([_, socialAuthState]) => !!socialAuthState),
+      switchMap(([{ doc }, socialAuthState]) => {
         const cloudText = formatCloudText(doc);
         return this.yaDisk
           .uploadDocument({
-            token,
+            token: socialAuthState.token,
             imageBase64: doc.imgBase64,
             imgFileName: `${doc.id}.jpeg`,
             text: cloudText,
@@ -126,7 +126,11 @@ export class CloudEffects {
           })
           .pipe(
             map(({ imageFileUrl }) =>
-              uploadCloudDocSuccess({ doc, url: imageFileUrl })
+              uploadCloudDocSuccess({
+                doc,
+                url: imageFileUrl,
+                provider: socialAuthState.provider,
+              })
             ),
             catchError((error) => of(uploadCloudDocError({ error, doc })))
           );
@@ -137,13 +141,19 @@ export class CloudEffects {
   uploadDocumentUpdateRepository$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(uploadCloudDoc, uploadCloudDocSuccess, uploadCloudDocError),
-        switchMap(({ doc }) =>
-          this.store.select(selectDoc(doc.id)).pipe(take(1))
+        ofType(
+          uploadCloudDocConfirmed,
+          uploadCloudDocSuccess,
+          uploadCloudDocError
         ),
-        switchMap((doc) =>
-          this.docsRepository.updateDocStored(doc.id, doc.stored)
-        )
+        switchMap(({ doc }) => {
+          console.log('222', doc);
+          return this.store.select(selectDoc(doc.id)).pipe(take(1));
+        }),
+        switchMap((doc) => {
+          console.log('333', doc);
+          return this.docsRepository.updateDocStored(doc.id, doc.stored);
+        })
       ),
     { dispatch: false }
   );

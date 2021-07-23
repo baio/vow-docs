@@ -5,7 +5,7 @@ import {
   profileRehydrateSuccess,
   profileSocialLoginSuccess,
   profileSocialLogout,
-  setUploadToCloudAutomatically,
+  setProfileConfig,
 } from './actions';
 
 export const initialState: ProfileState = {
@@ -21,17 +21,15 @@ export const profileReducer = createReducer(
   on(profileSocialLoginSuccess, (state, { socialAuthState }) =>
     assoc('socialAuthState', socialAuthState, state)
   ),
-  on(profileRehydrateSuccess, (state, { socialAuthState }) =>
-    assoc('socialAuthState', socialAuthState, state)
-  ),
+  on(profileRehydrateSuccess, (state, { socialAuthState, config }) => {
+    state = assoc('socialAuthState', socialAuthState, state);
+    state = assoc('config', config, state);
+    return state;
+  }),
   on(profileSocialLogout, (state) =>
     assoc('socialAuthState', null as any, state)
   ),
-  on(setUploadToCloudAutomatically, (state, { uploadToCloudAutomatically }) =>
-    assocPath(
-      ['config', 'uploadToCloudAutomatically'],
-      uploadToCloudAutomatically,
-      state
-    )
+  on(setProfileConfig, (state, { config }) =>
+    assocPath(['config'], config, state)
   )
 );

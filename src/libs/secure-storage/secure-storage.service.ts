@@ -27,4 +27,18 @@ export class SecureStorageService {
       return null;
     }
   }
+
+  setValueAsObject(key: string, value: any) {
+    const json = JSON.stringify(value);
+    return this.setValue(key, json);
+  }
+
+  async getValueAsObject(key: string) {
+    const str = await this.getValue(key);
+    if (str) {
+      return JSON.parse(str);
+    } else {
+      return null;
+    }
+  }
 }

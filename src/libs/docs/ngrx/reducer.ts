@@ -104,9 +104,10 @@ export const docsReducer = createReducer(
       state
     )
   ),
-  on(uploadCloudDocSuccess, (state, { doc, url }) => {
+  on(uploadCloudDocSuccess, (state, { doc, url, provider }) => {
     state = assocPath(['docs', doc.id, 'stored', 'status'], 'success', state);
     state = assocPath(['docs', doc.id, 'stored', 'url'], url, state);
+    state = assocPath(['docs', doc.id, 'stored', 'provider'], provider, state);
     return state;
   }),
   on(uploadCloudDocError, (state, { doc }) =>

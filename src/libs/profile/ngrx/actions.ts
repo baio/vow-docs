@@ -1,11 +1,14 @@
 import { Action, createAction, props } from '@ngrx/store';
-import { SocialAuthProvider, SocialAuthState } from '../models';
+import { ProfileConfig, SocialAuthProvider, SocialAuthState } from '../models';
 
 export const profileRehydrate = createAction('[Profile] Rehydrate');
 
 export const profileRehydrateSuccess = createAction(
   '[Profile] Rehydrate Success',
-  props<{ socialAuthState: SocialAuthState | null }>()
+  props<{
+    socialAuthState: SocialAuthState | null;
+    config: ProfileConfig | null;
+  }>()
 );
 
 export const profileSocialLogin = createAction(
@@ -24,7 +27,7 @@ export const profileSocialLoginError = createAction(
 
 export const profileSocialLogout = createAction('[Profile] Social Logout');
 
-export const setUploadToCloudAutomatically = createAction(
-  '[Profile] Set Upload To Cloud Automatically',
-  props<{ uploadToCloudAutomatically: boolean }>()
+export const setProfileConfig = createAction(
+  '[Profile] Set Profile Config',
+  props<{ config: ProfileConfig }>()
 );

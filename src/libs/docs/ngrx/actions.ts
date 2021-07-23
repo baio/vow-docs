@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { SocialAuthState } from 'src/libs/profile/models';
+import { SocialAuthProvider, SocialAuthState } from 'src/libs/profile/models';
 import { Doc, DocFormatted, DocState } from '../models';
 
 export const rehydrateDocs = createAction('[Docs] Rehydrate Docs');
@@ -95,7 +95,7 @@ export const uploadCloudDocConfirmed = createAction(
 
 export const uploadCloudDocSuccess = createAction(
   '[Docs] Upload Cloud Doc Success',
-  props<{ doc: Doc; url: string }>()
+  props<{ doc: Doc; url: string; provider: SocialAuthProvider }>()
 );
 
 export const uploadCloudDocError = createAction(

@@ -13,7 +13,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { SocialAuthProvider } from '../models';
+import { ProfileConfig, SocialAuthProvider } from '../models';
 import {
   profileRehydrate,
   profileRehydrateSuccess,
@@ -21,10 +21,12 @@ import {
   profileSocialLoginError,
   profileSocialLoginSuccess,
   profileSocialLogout,
+  setProfileConfig,
 } from './actions';
 
 const SOCIAL_AUTH_PROVIDER_KEY = 'social_auth_provider';
 const SOCIAL_AUTH_TOKEN_KEY = 'social_auth_token';
+const PROFILE_CONFIG_KEY = 'profile_config';
 
 @Injectable()
 export class ProfileEffects {
@@ -86,7 +88,7 @@ export class ProfileEffects {
     )
   );
 
-  profileSocialLoginRehydrate$ = createEffect(() =>
+  profileRehydrate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(profileRehydrate),
       switchMap(async () => {
@@ -96,11 +98,13 @@ export class ProfileEffects {
         const token = await this.secureStorageService.getValue(
           SOCIAL_AUTH_TOKEN_KEY
         );
+        const config: ProfileConfig =
+          await this.secureStorageService.getValueAsObject(PROFILE_CONFIG_KEY);
         const socialAuthState =
           provider && token
             ? { provider: provider as SocialAuthProvider, token }
             : null;
-        return profileRehydrateSuccess({ socialAuthState });
+        return profileRehydrateSuccess({ socialAuthState, config });
       })
     )
   );
@@ -112,6 +116,22 @@ export class ProfileEffects {
         tap(async () => {
           await this.secureStorageService.removeValue(SOCIAL_AUTH_PROVIDER_KEY);
           await this.secureStorageService.removeValue(SOCIAL_AUTH_TOKEN_KEY);
+        })
+      ),
+    {
+      dispatch: false,
+    }
+  );
+
+  setProfileConfig$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(setProfileConfig),
+        tap(async ({ config }) => {
+          await this.secureStorageService.setValueAsObject(
+            PROFILE_CONFIG_KEY,
+            config
+          );
         })
       ),
     {

@@ -6,6 +6,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { ProfileEffects } from './ngrx/effects';
 import { profileReducer } from './ngrx/reducer';
+import { AppProfileConfigComponent } from './profile-config/profile-config.component';
 import { AppProfileSocialProvidersComponent } from './profile-social-providers/profile-social-providers.component';
 import { AppProfileWorkspaceComponent } from './profile-workspace/profile-workspace.component';
 
@@ -19,6 +20,7 @@ import { AppProfileWorkspaceComponent } from './profile-workspace/profile-worksp
   declarations: [
     AppProfileSocialProvidersComponent,
     AppProfileWorkspaceComponent,
+    AppProfileConfigComponent,
   ],
   providers: [YaAuthService],
   exports: [AppProfileWorkspaceComponent],
