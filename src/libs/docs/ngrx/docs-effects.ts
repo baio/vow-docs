@@ -234,7 +234,7 @@ export class DocsEffects {
 
         const { role } = await actionSheet.onWillDismiss();
 
-        if (role !== 'cancel') {
+        if (role === 'remove-device' || role === 'remove-everywhere') {
           return deleteDocConfirmed({
             id: doc.id,
             deleteFromCloud: role === 'remove-everywhere',
