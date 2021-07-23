@@ -1,10 +1,15 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { ProfileState } from '../models';
 
-export const selectUserAuthState =
+export const selectProfileState =
   createFeatureSelector<ProfileState>('profile');
 
 export const selectSocialAuthState = createSelector(
-  selectUserAuthState,
+  selectProfileState,
   (state) => state.socialAuthState
+);
+
+export const selectProfileConfig = createSelector(
+  selectProfileState,
+  (state) => state.config
 );

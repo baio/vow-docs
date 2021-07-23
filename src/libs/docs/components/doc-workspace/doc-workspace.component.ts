@@ -32,9 +32,23 @@ import {
 import { selectDoc } from '../../ngrx/selectors';
 import { docFormattedToView } from '../../utils';
 
+/**
+ * hidden - no provider and doc is online
+ * online - provider and is doc is online
+ * online - provider / no provider and doc is in error
+ * offline - provider / no provider and doc is offline
+ */
+export type CloudUploadStatus =
+  | 'hidden'
+  | 'offline'
+  | 'online'
+  | 'online-error'
+  | 'online-progress';
+
 export interface UploadImageModalView {
   doc: Doc;
   docView: DocView;
+  cloudUploadStatus: CloudUploadStatus;
 }
 
 @Component({
@@ -45,8 +59,6 @@ export interface UploadImageModalView {
 })
 export class AppDocWorkspaceComponent implements OnInit {
   view$: Observable<UploadImageModalView>;
-  segment = 'main';
-
   @Input() documentId: string;
 
   @ViewChild(IonSelect) docTypeSelect: IonSelect;
@@ -60,12 +72,28 @@ export class AppDocWorkspaceComponent implements OnInit {
 
   ngOnInit() {
     const id$ = of(this.documentId);
+    const socialAuthState$ = this.store.select(selectSocialAuthState);
     this.view$ = id$.pipe(
       switchMap((id) => this.store.select(selectDoc(id))),
-      map((doc) => ({
-        doc,
-        docView: doc.formatted ? docFormattedToView(doc.formatted) : null,
-      }))
+      withLatestFrom(socialAuthState$),
+      map(
+        ([doc, socialAuthState]) =>
+          ({
+            doc,
+            docView: doc.formatted ? docFormattedToView(doc.formatted) : null,
+            cloudUploadStatus: socialAuthState
+              ? doc.stored
+                ? doc.stored.status === 'error'
+                  ? 'online-error'
+                  : doc.stored.status === 'progress'
+                  ? 'online-progress'
+                  : 'online'
+                : 'offline'
+              : doc.stored
+              ? 'hidden'
+              : 'offline',
+          } as UploadImageModalView)
+      )
     );
   }
 

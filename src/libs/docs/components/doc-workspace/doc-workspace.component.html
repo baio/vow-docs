@@ -25,20 +25,23 @@
         ><ion-icon name="create-outline"></ion-icon
       ></ion-fab-button>
       <ion-fab-button
-        *ngIf="!view.doc.stored || view.doc.stored.status === 'error'"
+        *ngIf="
+          view.cloudUploadStatus === 'offline' ||
+          view.cloudUploadStatus === 'online-error'
+        "
         (click)="onCloudUpload(view.doc)"
         ><ion-icon name="cloud-offline-outline"></ion-icon
       ></ion-fab-button>
       <ion-fab-button
         *ngIf="
-          view.doc.stored?.status === 'progress' ||
-          view.doc.stored?.status === 'success'
+          view.cloudUploadStatus === 'online' ||
+          view.cloudUploadStatus === 'online-progress'
         "
-        [disabled]="view.doc.stored?.status === 'progress'"
+        [disabled]="view.cloudUploadStatus === 'online-progress'"
         (click)="onCloudRemove(view.doc)"
         ><ion-icon
           [name]="
-            view.doc.stored?.status === 'progress'
+            view.cloudUploadStatus === 'online-progress'
               ? 'cloud-upload-outline'
               : 'cloud-outline'
           "

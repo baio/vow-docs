@@ -12,6 +12,7 @@ import {
   updateDocFormatted,
   updateDocState,
   uploadCloudDoc,
+  uploadCloudDocConfirmed,
   uploadCloudDocError,
   uploadCloudDocSuccess,
   uploadImage,
@@ -91,7 +92,7 @@ export const docsReducer = createReducer(
       return state;
     }
   }),
-  on(uploadCloudDoc, (state, { doc, date }) =>
+  on(uploadCloudDocConfirmed, (state, { doc, date }) =>
     assocPath(
       ['docs', doc.id, 'stored'],
       {

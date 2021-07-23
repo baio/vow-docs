@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
-import { selectSocialAuthState } from '@app/profile';
+import {
+  profileSocialLogin,
+  selectProfileState,
+  selectSocialAuthState,
+} from '@app/profile';
+import { AlertController } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import {
   catchError,
   filter,
   map,
-  startWith,
   switchMap,
   take,
   withLatestFrom,
@@ -19,6 +23,7 @@ import {
   removeCloudDocError,
   removeCloudDocSuccess,
   uploadCloudDoc,
+  uploadCloudDocConfirmed,
   uploadCloudDocError,
   uploadCloudDocSuccess,
 } from './actions';
@@ -35,12 +40,76 @@ export class CloudEffects {
     private readonly actions$: Actions,
     private readonly store: Store,
     private readonly yaDisk: YaDiskService,
-    private readonly docsRepository: DocsRepositoryService
+    private readonly docsRepository: DocsRepositoryService,
+    private readonly alertController: AlertController
   ) {}
 
   uploadDocument$ = createEffect(() =>
     this.actions$.pipe(
       ofType(uploadCloudDoc),
+      withLatestFrom(this.store.select(selectProfileState)),
+      switchMap(async ([{ doc, date }, profile]) => {
+        if (profile.socialAuthState) {
+          if (profile.config.uploadToCloudAutomatically) {
+            // provider connected and we can upload doc automatically
+            return uploadCloudDocConfirmed({ doc, date });
+          } else {
+            // asking permission to upload doc
+            const alert = await this.alertController.create({
+              header: 'Загрузить документ в облако?',
+              message: `Ваш документ будет загружен на ваш ${profile.socialAuthState.provider} диск`,
+              buttons: [
+                { text: 'Отмена', role: 'cancel' },
+                { text: 'Загрузить', role: 'ok' },
+              ],
+            });
+
+            await alert.present();
+
+            const { role } = await alert.onDidDismiss();
+
+            return role === 'ok'
+              ? uploadCloudDocConfirmed({ doc, date })
+              : null;
+          }
+        } else {
+          // ask connect provider first !
+          const alert = await this.alertController.create({
+            header: 'Войти в облако',
+            message: `Для сохрвнения вашего документа в облаке необходим вход на ваш облачный диск`,
+            inputs: [
+              {
+                name: 'yandex',
+                type: 'radio',
+                label: 'Yandex',
+                value: 'yandex',
+                checked: true,
+              },
+            ],
+            buttons: [
+              { text: 'Отмена', role: 'cancel' },
+              { text: 'Войти', role: 'ok' },
+            ],
+          });
+          await alert.present();
+
+          const { role } = await alert.onDidDismiss();
+
+          if (role === 'ok') {
+            return profileSocialLogin({
+              provider: 'yandex',
+              continuation: uploadCloudDocConfirmed({ doc, date }),
+            });
+          }
+        }
+      }),
+      filter((f) => !!f)
+    )
+  );
+
+  uploadDocumentConfirmed$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(uploadCloudDocConfirmed),
       withLatestFrom(this.token$),
       filter(([_, token]) => !!token),
       switchMap(([{ doc }, token]) => {

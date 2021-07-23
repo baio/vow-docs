@@ -5,12 +5,20 @@ import { appStarted } from '@app/shared';
 import { YaAuthService } from '@app/social-auth';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, NEVER } from 'rxjs';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError,
+  filter,
+  map,
+  mergeMap,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import { SocialAuthProvider } from '../models';
 import {
   profileRehydrate,
   profileRehydrateSuccess,
   profileSocialLogin,
+  profileSocialLoginError,
   profileSocialLoginSuccess,
   profileSocialLogout,
 } from './actions';
@@ -24,9 +32,7 @@ export class ProfileEffects {
     private readonly actions$: Actions,
     private readonly yaAuthService: YaAuthService,
     private readonly secureStorageService: SecureStorageService
-  ) {
-    console.log('??? ProfileEffects');
-  }
+  ) {}
 
   appStarted$ = createEffect(() =>
     this.actions$.pipe(
@@ -38,40 +44,46 @@ export class ProfileEffects {
   profileSocialLogin$ = createEffect(() =>
     this.actions$.pipe(
       ofType(profileSocialLogin),
-      switchMap(({ provider }) => {
+      switchMap(async ({ provider, continuation }) => {
         switch (provider) {
           case 'yandex':
-            return this.yaAuthService
-              .login()
-              .then((token) => ({ token, provider }))
-              .catch(() => null);
+            try {
+              const token = await this.yaAuthService.login();
+              return profileSocialLoginSuccess({
+                socialAuthState: { token, provider },
+                continuation,
+              });
+            } catch {
+              return null;
+            }
           default:
             return null;
         }
       }),
-      filter((f) => !!f),
-      map((socialAuthState) => profileSocialLoginSuccess({ socialAuthState }))
+      filter((f) => !!f)
     )
   );
 
-  profileSocialLoginSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(profileSocialLoginSuccess),
-        tap(async ({ socialAuthState }) => {
-          await this.secureStorageService.setValue(
-            SOCIAL_AUTH_PROVIDER_KEY,
-            socialAuthState.provider
-          );
-          await this.secureStorageService.setValue(
-            SOCIAL_AUTH_TOKEN_KEY,
-            socialAuthState.token
-          );
-        })
-      ),
-    {
-      dispatch: false,
-    }
+  profileSocialLoginSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(profileSocialLoginSuccess),
+      switchMap(async ({ socialAuthState, continuation }) => {
+        await this.secureStorageService.setValue(
+          SOCIAL_AUTH_PROVIDER_KEY,
+          socialAuthState.provider
+        );
+        await this.secureStorageService.setValue(
+          SOCIAL_AUTH_TOKEN_KEY,
+          socialAuthState.token
+        );
+        if (continuation) {
+          return continuation;
+        } else {
+          return null;
+        }
+      }),
+      filter((f) => !!f)
+    )
   );
 
   profileSocialLoginRehydrate$ = createEffect(() =>

@@ -83,6 +83,11 @@ export const uploadCloudDoc = createAction(
   props<{ doc: Doc; date: number }>()
 );
 
+export const uploadCloudDocConfirmed = createAction(
+  '[Docs] Upload Cloud Doc Confirmed',
+  props<{ doc: Doc; date: number }>()
+);
+
 export const uploadCloudDocSuccess = createAction(
   '[Docs] Upload Cloud Doc Success',
   props<{ doc: Doc; url: string }>()
