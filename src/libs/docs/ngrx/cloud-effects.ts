@@ -20,6 +20,7 @@ import { YaDiskService } from 'src/libs/ya-disk';
 import { DocsRepositoryService } from '../repository/docs.repository';
 import {
   removeCloudDoc,
+  removeCloudDocConfirmed,
   removeCloudDocError,
   removeCloudDocSuccess,
   uploadCloudDoc,
@@ -146,9 +147,34 @@ export class CloudEffects {
     { dispatch: false }
   );
 
-  removeDocument$ = createEffect(() =>
+  removeCloudDoc$ = createEffect(() =>
     this.actions$.pipe(
       ofType(removeCloudDoc),
+      withLatestFrom(this.store.select(selectSocialAuthState)),
+      filter(([_, socialAuthState]) => !!socialAuthState),
+      switchMap(async ([{ id }, socialAuthState]) => {
+        const alert = await this.alertController.create({
+          header: 'Удалить документ из облака?',
+          message: `Документ будет удален с вашего ${socialAuthState.provider} диска`,
+          buttons: [
+            { text: 'Отмена', role: 'cancel' },
+            { text: 'Удалить', role: 'ok' },
+          ],
+        });
+
+        await alert.present();
+
+        const { role } = await alert.onDidDismiss();
+
+        return role === 'ok' ? removeCloudDocConfirmed({ id }) : null;
+      }),
+      filter((f) => !!f)
+    )
+  );
+
+  removeCloudDocConfirmed$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(removeCloudDocConfirmed),
       withLatestFrom(this.token$),
       filter(([_, token]) => !!token),
       switchMap(([{ id }, token]) =>
@@ -169,7 +195,7 @@ export class CloudEffects {
   removeDocumentUpdateRepository$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(removeCloudDoc),
+        ofType(removeCloudDocConfirmed),
         switchMap((doc) => this.docsRepository.updateDocStored(doc.id, null))
       ),
     { dispatch: false }

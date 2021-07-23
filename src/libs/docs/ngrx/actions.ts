@@ -103,6 +103,11 @@ export const removeCloudDoc = createAction(
   props<{ id: string }>()
 );
 
+export const removeCloudDocConfirmed = createAction(
+  '[Docs] Remove Cloud Doc Confirmed',
+  props<{ id: string }>()
+);
+
 export const removeCloudDocSuccess = createAction(
   '[Docs] Remove Cloud Doc Success',
   props<{ id: string }>()

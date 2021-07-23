@@ -23,6 +23,7 @@ import {
   deleteDoc,
   editDoc,
   removeCloudDoc,
+  removeCloudDocConfirmed,
   removeDocTag,
   setDocComment,
   shareDoc,

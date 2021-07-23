@@ -5,7 +5,7 @@ import {
   addDocTag,
   deleteDoc,
   rehydrateDocsSuccess,
-  removeCloudDoc,
+  removeCloudDocConfirmed,
   removeDocTag,
   setDocComment,
   setImageBase64,
@@ -112,7 +112,7 @@ export const docsReducer = createReducer(
   on(uploadCloudDocError, (state, { doc }) =>
     assocPath(['docs', doc.id, 'stored', 'status'], 'error', state)
   ),
-  on(removeCloudDoc, (state, { id }) =>
+  on(removeCloudDocConfirmed, (state, { id }) =>
     assocPath(['docs', id, 'stored'], null as any, state)
   )
 );
