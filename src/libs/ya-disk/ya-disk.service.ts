@@ -30,7 +30,7 @@ export class YaDiskService {
     return this.http.put(url, null, { headers });
   }
 
-  private uploadImage(token: string, imageBase64: string, fileName: string) {
+  uploadImage(token: string, imageBase64: string, fileName: string) {
     const blob = base64Str2Blob(imageBase64);
     const url = this.getUrl(
       `resources/upload?path=${VOW_DOCS_FOLDER_NAME}/${fileName}&overwrite=true`

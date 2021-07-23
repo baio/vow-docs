@@ -7,14 +7,9 @@ import {
 import { ModalController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Doc, DocFormatted, DocLabel, OptItem } from '../../models';
-import {
-  deleteDoc,
-  deleteDocConfirmed,
-  showFullScreenImage,
-  updateDocFormatted,
-} from '../../ngrx/actions';
+import { showFullScreenImage, updateDocFormatted } from '../../ngrx/actions';
 import { selectDoc } from '../../ngrx/selectors';
 
 export interface UploadImageModalView {
@@ -35,11 +30,12 @@ export class AppDocEditWorkspaceComponent implements OnInit {
 
   @Input() title: string;
   @Input() documentId: string;
+  @Input() isNew = false;
 
   readonly formTypes: OptItem[] = [
     {
       key: 'passport-rf-main-page',
-      label: 'Гражданский Пасспорт РФ (главная)',
+      label: 'Гражданский Пасспорт РФ',
     },
   ];
 
@@ -52,13 +48,11 @@ export class AppDocEditWorkspaceComponent implements OnInit {
     const id$ = of(this.documentId); //this.activatedRoute.params.pipe(map(({ id }) => id));
     const doc$ = id$.pipe(switchMap((id) => this.store.select(selectDoc(id))));
     this.view$ = combineLatest([doc$, this.activeDocLabel$]).pipe(
-      tap(console.log),
       map(([doc, activeDocLabel]) => ({
         doc,
         activeDocLabel: !activeDocLabel ? doc.labeled?.label : activeDocLabel,
         activeDocFormatted: doc.formatted,
-      })),
-      tap(console.log)
+      }))
     );
   }
 

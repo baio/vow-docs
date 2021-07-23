@@ -21,6 +21,7 @@ import { YaDiskService } from 'src/libs/ya-disk';
 import { DocsRepositoryService } from '../repository/docs.repository';
 import {
   addDocTag,
+  addDocument,
   deleteDocConfirmed,
   removeCloudDoc,
   removeCloudDocConfirmed,
@@ -51,6 +52,38 @@ export class CloudEffects {
     private readonly docsRepository: DocsRepositoryService,
     private readonly alertController: AlertController
   ) {}
+
+  addDoc$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addDocument),
+      withLatestFrom(this.store.select(selectProfileState)),
+      filter(
+        ([_, profileState]) =>
+          !!profileState.socialAuthState &&
+          !!profileState.config.uploadToCloudAutomatically
+      ),
+      switchMap(([{ id }, profileState]) =>
+        this.store.select(selectDoc(id)).pipe(
+          take(1),
+          map((doc) => ({ doc, socialAuthState: profileState.socialAuthState }))
+        )
+      ),
+      switchMap(({ doc, socialAuthState }) =>
+        this.yaDisk
+          .uploadImage(socialAuthState.token, doc.imgBase64, `${doc.id}.jpeg`)
+          .pipe(
+            map((url) =>
+              uploadCloudDocSuccess({
+                doc,
+                url,
+                provider: socialAuthState.provider,
+              })
+            ),
+            catchError((error) => of(uploadCloudDocError({ error, doc })))
+          )
+      )
+    )
+  );
 
   uploadDocument$ = createEffect(() =>
     this.actions$.pipe(

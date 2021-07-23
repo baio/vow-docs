@@ -93,6 +93,11 @@ export const uploadCloudDocConfirmed = createAction(
   props<{ doc: Doc; date: number }>()
 );
 
+export const tryUploadCloudDocAutomatically = createAction(
+  '[Docs] Try Upload Cloud Doc Automatically',
+  props<{ doc: Doc; date: number }>()
+);
+
 export const uploadCloudDocSuccess = createAction(
   '[Docs] Upload Cloud Doc Success',
   props<{ doc: Doc; url: string; provider: SocialAuthProvider }>()
