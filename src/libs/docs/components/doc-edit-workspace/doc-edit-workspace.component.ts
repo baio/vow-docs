@@ -26,11 +26,10 @@ export interface UploadImageModalView {
 })
 export class AppDocEditWorkspaceComponent implements OnInit {
   view$: Observable<UploadImageModalView>;
-  activeDocLabel$ = new BehaviorSubject<DocLabel>('unknown');
+  activeDocLabel$ = new BehaviorSubject<DocLabel>(null);
 
   @Input() title: string;
   @Input() documentId: string;
-  @Input() documentLabel: DocLabel;
 
   readonly formTypes: OptItem[] = [
     {
@@ -54,7 +53,9 @@ export class AppDocEditWorkspaceComponent implements OnInit {
     this.view$ = combineLatest([doc$, this.activeDocLabel$]).pipe(
       map(([doc, activeDocLabel]) => ({
         doc,
-        activeDocLabel: !activeDocLabel ? doc.labeled?.label : activeDocLabel,
+        activeDocLabel: !activeDocLabel
+          ? doc.labeled?.label || 'unknown'
+          : activeDocLabel,
         activeDocFormatted: doc.formatted,
       }))
     );
