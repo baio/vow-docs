@@ -25,6 +25,10 @@ export const searchDocs = (docs: Doc[], search: string) => {
           weight: 0.5,
         },
         {
+          name: 'formatted.text',
+          weight: 0.5,
+        },
+        {
           name: 'formatted.lastName',
           weight: 0.9,
         },

@@ -7,25 +7,8 @@ import {
   DocState,
   DocStored,
 } from '../models';
+import { getDocFormattedUpdateValues } from './utils/get-formatted-update-values';
 
-const getDocFormattedPassportRFMainPageUpdateValues = (
-  data: DocPassportRF
-) => ({
-  lastName: data.lastName,
-  firstMiddleName:
-    data.firstName || data.middleName
-      ? [data.firstName, data.middleName].join()
-      : null,
-});
-
-const getDocFormattedUpdateValues = (docFormatted: DocFormatted) => {
-  switch (docFormatted.kind) {
-    case 'passport-rf':
-      return getDocFormattedPassportRFMainPageUpdateValues(docFormatted);
-    default:
-      return null;
-  }
-};
 @Injectable()
 export class DocsRepositoryService {
   constructor(private readonly db: DbService) {}

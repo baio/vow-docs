@@ -17,6 +17,7 @@ export type SocialAuthProviderWithOffline = SocialAuthProvider | 'offline';
 })
 export class AppProfileConfigComponent {
   @Input() config: ProfileConfig;
+  @Input() cloudActive = false;
 
   @Output() configChange = new EventEmitter<ProfileConfig>();
 

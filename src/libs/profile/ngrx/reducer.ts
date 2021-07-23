@@ -11,7 +11,7 @@ import {
 export const initialState: ProfileState = {
   socialAuthState: null,
   config: {
-    uploadToCloudAutomatically: false,
+    uploadToCloudAutomatically: true,
     extractImageDataAutomatically: false,
   },
 };
