@@ -3,13 +3,13 @@ import { DbService } from '../../db';
 import {
   Doc,
   DocFormatted,
-  DocPassportRFMainPage,
+  DocPassportRF,
   DocState,
   DocStored,
 } from '../models';
 
 const getDocFormattedPassportRFMainPageUpdateValues = (
-  data: DocPassportRFMainPage
+  data: DocPassportRF
 ) => ({
   lastName: data.lastName,
   firstMiddleName:

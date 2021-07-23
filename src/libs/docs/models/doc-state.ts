@@ -17,7 +17,7 @@ export interface DocLabeled {
   label: DocLabel;
 }
 
-export interface DocPassportRFMainPage {
+export interface DocPassportRF {
   kind: 'passport-rf';
   lastName: string;
   firstName: string;
@@ -31,7 +31,7 @@ export interface DocPassportRFMainPage {
   departmentCode: string;
 }
 
-export type DocFormatted = DocPassportRFMainPage;
+export type DocFormatted = DocPassportRF;
 
 export interface DocState {
   stored?: DocStored;

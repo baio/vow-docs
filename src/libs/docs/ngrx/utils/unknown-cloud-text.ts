@@ -1,5 +1,5 @@
 import { format, parse } from 'date-fns';
-import { DocPassportRFMainPage } from '../../models';
+import { DocPassportRF } from '../../models';
 import { DocMeta } from './doc-meta';
 
 export const formatUnknownCloudText = (meta: DocMeta) => {
@@ -38,7 +38,7 @@ export const parseUnknownCloudText = (text: string) => {
         ? parse(lines[21], 'dd.MM.yyyy', null).toISOString()
         : null,
       departmentCode: lines[23] || null,
-    } as DocPassportRFMainPage;
+    } as DocPassportRF;
 
     const docMeta = {
       tags: (lines[25] || '').split(','),

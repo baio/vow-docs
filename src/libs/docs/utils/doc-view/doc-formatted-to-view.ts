@@ -1,7 +1,7 @@
 import {
     Doc,
     DocFormatted,
-    DocPassportRFMainPage,
+    DocPassportRF,
     DocView,
 } from '../../models';
 import { passportRFMainPage } from './passport-rf';
