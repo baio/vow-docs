@@ -9,15 +9,12 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, of } from 'rxjs';
 import {
-  bufferTime,
   catchError,
   debounceTime,
   filter,
   map,
-  mergeMap,
   switchMap,
   take,
-  tap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { YaDiskService } from 'src/libs/ya-disk';
