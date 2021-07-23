@@ -1,14 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { selectSocialAuthState } from '@app/profile';
 import { appStarted } from '@app/shared';
 import { Clipboard } from '@capacitor/clipboard';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
-import { ModalController, ToastController } from '@ionic/angular';
+import {
+  ActionSheetController,
+  ModalController,
+  ToastController,
+} from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError,
+  filter,
+  map,
+  mapTo,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { AppDocEditWorkspaceComponent } from '../components/doc-edit-workspace/doc-edit-workspace.component';
 import { AppDocWorkspaceComponent } from '../components/doc-workspace/doc-workspace.component';
 import { AppFullScreenImageComponent } from '../components/full-screen-image/full-screen-image.component';
@@ -19,6 +32,7 @@ import {
   addDocTag,
   copyClipboard,
   deleteDoc,
+  deleteDocConfirmed,
   displayDoc,
   editDoc,
   rehydrateDocs,
@@ -45,6 +59,7 @@ export class DocsEffects {
     private readonly router: Router,
     private readonly toastController: ToastController,
     private readonly store: Store,
+    private readonly actionSheetController: ActionSheetController
   ) {}
 
   appStart$ = createEffect(() =>
@@ -186,13 +201,60 @@ export class DocsEffects {
     { dispatch: false }
   );
 
-  deleteDoc$ = createEffect(
+  deleteDoc$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteDoc),
+      withLatestFrom(this.store.select(selectSocialAuthState)),
+      switchMap(async ([{ doc }, socialAuthState]) => {
+        const buttons = [
+          {
+            text: 'Удалить с телефона',
+            icon: 'alert-outline',
+            role: 'remove-device',
+          },
+          {
+            text: 'Отмена',
+            icon: 'close-outline',
+            role: 'cancel',
+          },
+        ];
+        if (socialAuthState && doc.stored) {
+          buttons.splice(1, 0, {
+            text: 'Удалить везде',
+            icon: 'cloud-offline-outline',
+            role: 'remove-everywhere',
+          });
+        }
+        const actionSheet = await this.actionSheetController.create({
+          header: 'Удалить документ',
+          buttons,
+        });
+
+        await actionSheet.present();
+
+        const { role } = await actionSheet.onWillDismiss();
+
+        if (role !== 'cancel') {
+          return deleteDocConfirmed({
+            id: doc.id,
+            deleteFromCloud: role === 'remove-everywhere',
+          });
+        } else {
+          return null;
+        }
+      }),
+      filter((f) => !!f)
+    )
+  );
+
+  deleteDocConfirmed$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(deleteDoc),
-        tap(({ id }) => {
-          this.router.navigate(['/tabs', 'docs']);
-          this.docRepository.deleteDoc(id);
+        ofType(deleteDocConfirmed),
+        tap(async ({ id }) => {
+          await this.modalController.dismiss();
+          // this.router.navigate(['/tabs', 'docs']);
+          await this.docRepository.deleteDoc(id);
         })
       ),
     { dispatch: false }

@@ -19,6 +19,7 @@ import {
 import { YaDiskService } from 'src/libs/ya-disk';
 import { DocsRepositoryService } from '../repository/docs.repository';
 import {
+  deleteDocConfirmed,
   removeCloudDoc,
   removeCloudDocConfirmed,
   removeCloudDocError,
@@ -145,6 +146,14 @@ export class CloudEffects {
         )
       ),
     { dispatch: false }
+  );
+
+  removeDoc$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteDocConfirmed),
+      filter((f) => f.deleteFromCloud),
+      map(({ id }) => removeCloudDocConfirmed({ id }))
+    )
   );
 
   removeCloudDoc$ = createEffect(() =>

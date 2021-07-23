@@ -3,7 +3,7 @@ import { assocPath, fromPairs, omit, pipe } from 'lodash/fp';
 import { DocsState } from '../models';
 import {
   addDocTag,
-  deleteDoc,
+  deleteDocConfirmed,
   rehydrateDocsSuccess,
   removeCloudDocConfirmed,
   removeDocTag,
@@ -48,7 +48,7 @@ export const docsReducer = createReducer(
     const hash = fromPairs(docs.map((m) => [m.id, m]));
     return assocPath(['docs'], hash, state);
   }),
-  on(deleteDoc, (state, { id }) =>
+  on(deleteDocConfirmed, (state, { id }) =>
     assocPath(['docs'], omit(id, state.docs), state)
   ),
   on(
@@ -112,7 +112,11 @@ export const docsReducer = createReducer(
   on(uploadCloudDocError, (state, { doc }) =>
     assocPath(['docs', doc.id, 'stored', 'status'], 'error', state)
   ),
-  on(removeCloudDocConfirmed, (state, { id }) =>
-    assocPath(['docs', id, 'stored'], null as any, state)
-  )
+  on(removeCloudDocConfirmed, (state, { id }) => {
+    if (state.docs[id]) {
+      return assocPath(['docs', id, 'stored'], null as any, state);
+    } else {
+      return state;
+    }
+  })
 );

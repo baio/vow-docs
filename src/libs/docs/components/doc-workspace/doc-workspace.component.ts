@@ -14,13 +14,14 @@ import {
 } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { SocialAuthState } from 'src/libs/profile/models';
 import { Doc, DocView } from '../../models';
 import {
   addDocTag,
   copyClipboard,
   deleteDoc,
+  deleteDocConfirmed,
   editDoc,
   removeCloudDoc,
   removeCloudDocConfirmed,
@@ -77,48 +78,31 @@ export class AppDocWorkspaceComponent implements OnInit {
     this.view$ = id$.pipe(
       switchMap((id) => this.store.select(selectDoc(id))),
       withLatestFrom(socialAuthState$),
-      map(
-        ([doc, socialAuthState]) =>
-          ({
-            doc,
-            docView: doc.formatted ? docFormattedToView(doc.formatted) : null,
-            cloudUploadStatus: socialAuthState
-              ? doc.stored
-                ? doc.stored.status === 'error'
-                  ? 'online-error'
-                  : doc.stored.status === 'progress'
-                  ? 'online-progress'
-                  : 'online'
-                : 'offline'
-              : doc.stored
-              ? 'hidden'
-              : 'offline',
-          } as UploadImageModalView)
-      )
+      map(([doc, socialAuthState]) =>
+        doc
+          ? ({
+              doc,
+              docView: doc.formatted ? docFormattedToView(doc.formatted) : null,
+              cloudUploadStatus: socialAuthState
+                ? doc.stored
+                  ? doc.stored.status === 'error'
+                    ? 'online-error'
+                    : doc.stored.status === 'progress'
+                    ? 'online-progress'
+                    : 'online'
+                  : 'offline'
+                : doc.stored
+                ? 'hidden'
+                : 'offline',
+            } as UploadImageModalView)
+          : null
+      ),
+      tap(console.log)
     );
   }
 
   async onDelete(doc: Doc) {
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Удалить документ',
-      buttons: [
-        {
-          text: 'Удалить безвозвратно',
-          icon: 'alert-outline',
-          handler: () => {
-            this.store.dispatch(deleteDoc({ id: doc.id }));
-            this.modalController.dismiss();
-          },
-        },
-        {
-          text: 'Отмена',
-          icon: 'close-outline',
-          handler: () => {},
-        },
-      ],
-    });
-
-    await actionSheet.present();
+    this.store.dispatch(deleteDoc({ doc }));
   }
 
   onEdit(doc: Doc) {
