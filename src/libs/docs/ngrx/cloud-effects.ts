@@ -7,7 +7,7 @@ import {
 import { AlertController } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import {
   catchError,
   filter,
@@ -24,6 +24,7 @@ import {
   removeCloudDocConfirmed,
   removeCloudDocError,
   removeCloudDocSuccess,
+  updateDocFormatted,
   uploadCloudDoc,
   uploadCloudDocConfirmed,
   uploadCloudDocError,
@@ -146,14 +147,12 @@ export class CloudEffects {
           uploadCloudDocSuccess,
           uploadCloudDocError
         ),
-        switchMap(({ doc }) => {
-          console.log('222', doc);
-          return this.store.select(selectDoc(doc.id)).pipe(take(1));
-        }),
-        switchMap((doc) => {
-          console.log('333', doc);
-          return this.docsRepository.updateDocStored(doc.id, doc.stored);
-        })
+        switchMap(({ doc }) =>
+          this.store.select(selectDoc(doc.id)).pipe(take(1))
+        ),
+        switchMap((doc) =>
+          this.docsRepository.updateDocStored(doc.id, doc.stored)
+        )
       ),
     { dispatch: false }
   );
@@ -218,5 +217,29 @@ export class CloudEffects {
         switchMap((doc) => this.docsRepository.updateDocStored(doc.id, null))
       ),
     { dispatch: false }
+  );
+
+  updateDocFormatted$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateDocFormatted),
+      withLatestFrom(this.store.select(selectSocialAuthState)),
+      filter(([_, socialAuthState]) => !!socialAuthState),
+      switchMap(([{ id }, socialAuthState]) =>
+        this.store.select(selectDoc(id)).pipe(
+          take(1),
+          map((doc) => ({ doc, socialAuthState }))
+        )
+      ),
+      filter(({ doc }) => !!doc.stored),
+      switchMap(({ doc, socialAuthState }) => {
+        const cloudText = formatCloudText(doc);
+        return this.yaDisk
+          .uploadText(socialAuthState.token, cloudText, `${doc.id}.txt`)
+          .pipe(
+            switchMap(() => EMPTY),
+            catchError((error) => of(uploadCloudDocError({ error, doc })))
+          );
+      })
+    )
   );
 }

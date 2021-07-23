@@ -69,7 +69,7 @@ export class YaDiskService {
     return this.http.delete(url, { headers });
   }
 
-  private uploadText(token: string, text: string, fileName: string) {
+  uploadText(token: string, text: string, fileName: string) {
     const blob = text2Blob(text);
     const url = this.getUrl(
       `resources/upload?path=${VOW_DOCS_FOLDER_NAME}/${fileName}&overwrite=true`
