@@ -1,18 +1,23 @@
-import { format, parse } from 'date-fns';
-import { DocPassportRF } from '../../models';
+import { DocUnknown } from '../../models';
 import { DocMeta } from './doc-meta';
+import { flatStr, flatTags, unFlatStr, unFlatTags } from './str-utils';
 
-export const formatUnknownCloudText = (meta: DocMeta) => {
+export const formatUnknownCloudText = (
+  docFormatted: DocUnknown,
+  meta: DocMeta
+) => {
   const VERSION = 1;
   const text = `
   ВЕРСИЯ
   ${VERSION}
   ТИП ДОКУМЕНТА
   НЕИЗВЕСТНЫЙ
+  ТЕКСТ
+  ${flatStr(docFormatted.text)}
   ТАГИ
-  ${(meta.tags || []).join(',')}
+  ${flatTags(meta.tags)}
   КОММЕНТАРИЙ
-  ${meta.comment || ''}
+  ${flatStr(meta.comment)}
   СИСТЕМНАЯ ДАТА
   ${meta.date}
   `;
@@ -21,30 +26,21 @@ export const formatUnknownCloudText = (meta: DocMeta) => {
 
 export const parseUnknownCloudText = (text: string) => {
   const lines = text.split('\n');
-  if (lines[3] === 'ПАССПОРТ РФ') {
+  if (lines[3] === 'НЕИЗВЕСТНЫЙ') {
     const docFormatted = {
-      kind: 'passport-rf',
-      lastName: lines[5] || null,
-      firstName: lines[7] || null,
-      middleName: lines[9] || null,
-      identifier: lines[11] || null,
-      issuer: lines[13] || null,
-      issueDate: lines[15]
-        ? parse(lines[15], 'dd.MM.yyyy', null).toISOString()
-        : null,
-      sex: lines[17] ? (lines[17] === 'мужской' ? 'male' : 'feamle') : null,
-      dateOfBirth: lines[19],
-      placeOfBirth: lines[21]
-        ? parse(lines[21], 'dd.MM.yyyy', null).toISOString()
-        : null,
-      departmentCode: lines[23] || null,
-    } as DocPassportRF;
+      kind: 'unknown',
+      text: unFlatStr(lines[5]),
+    } as DocUnknown;
 
     const docMeta = {
-      tags: (lines[25] || '').split(','),
-      comment: lines[27] || null,
-      date: lines[29] ? +lines[29] : null,
+      tags: unFlatTags(lines[8]),
+      comment: unFlatStr(lines[10]),
+      date: lines[12] ? +lines[12] : null,
     } as DocMeta;
+    return {
+      docFormatted,
+      docMeta,
+    };
   } else {
     return null;
   }

@@ -1,6 +1,7 @@
 import { format, parse } from 'date-fns';
 import { DocPassportRF } from '../../models';
 import { DocMeta } from './doc-meta';
+import { flatStr, flatTags, unFlatStr, unFlatTags } from './str-utils';
 
 export const formatPassportRFCloudText = (
   docFormatted: DocPassportRF,
@@ -47,9 +48,9 @@ export const formatPassportRFCloudText = (
   МЕСТО РОЖДЕНИЯ
   ${docFormatted.placeOfBirth || ''}
   ТАГИ
-  ${(meta.tags || []).join(',')}
+  ${flatTags(meta.tags)}
   КОММЕНТАРИЙ
-  ${meta.comment || ''}
+  ${flatStr(meta.comment)}
   СИСТЕМНАЯ ДАТА
   ${meta.date}
   `;
@@ -65,7 +66,7 @@ export const parsePassportRFCloudText = (text: string) => {
       firstName: lines[7] || null,
       middleName: lines[9] || null,
       identifier: lines[11] || null,
-      issuer: lines[13] || null,
+      issuer: unFlatStr(lines[13]),
       issueDate: lines[15]
         ? parse(lines[15], 'dd.MM.yyyy', null).toISOString()
         : null,
@@ -78,8 +79,8 @@ export const parsePassportRFCloudText = (text: string) => {
     } as DocPassportRF;
 
     const docMeta = {
-      tags: (lines[25] || '').split(','),
-      comment: lines[27] || null,
+      tags: unFlatTags(lines[25]),
+      comment: unFlatStr(lines[27]),
       date: lines[29] ? +lines[29] : null,
     } as DocMeta;
 

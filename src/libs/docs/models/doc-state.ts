@@ -11,10 +11,15 @@ export interface DocParsed {
   words: string[];
 }
 
-export type DocLabel = 'passport-rf';
+export type DocLabel = 'passport-rf' | 'unknown';
 
 export interface DocLabeled {
   label: DocLabel;
+}
+
+export interface DocUnknown {
+  kind: 'unknown';
+  text: string;
 }
 
 export interface DocPassportRF {
@@ -31,7 +36,7 @@ export interface DocPassportRF {
   departmentCode: string;
 }
 
-export type DocFormatted = DocPassportRF;
+export type DocFormatted = DocPassportRF | DocUnknown;
 
 export interface DocState {
   stored?: DocStored;

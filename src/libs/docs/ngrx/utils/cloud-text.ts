@@ -9,12 +9,16 @@ export const formatCloudText = (doc: Doc) => {
     date: doc.date,
     comment: doc.comment,
   } as DocMeta;
-  if (doc.formatted && doc.formatted) {
+  if (doc.formatted) {
     switch (doc.formatted.kind) {
       case 'passport-rf':
         return formatPassportRFCloudText(doc.formatted, meta);
+      case 'unknown':
+        return formatUnknownCloudText(doc.formatted, meta);
+      default:
+        return null;
     }
   } else {
-    return formatUnknownCloudText(meta);
+    return null;
   }
 };

@@ -155,6 +155,9 @@ export class CloudEffects {
       filter(([_, socialAuthState]) => !!socialAuthState),
       switchMap(([{ doc }, socialAuthState]) => {
         const cloudText = formatCloudText(doc);
+        if (!cloudText) {
+          return EMPTY;
+        }
         return this.yaDisk
           .uploadDocument({
             token: socialAuthState.token,

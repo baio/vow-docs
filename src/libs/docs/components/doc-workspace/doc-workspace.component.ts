@@ -6,25 +6,17 @@ import {
   ViewChild,
 } from '@angular/core';
 import { selectSocialAuthState } from '@app/profile';
-import {
-  ActionSheetController,
-  IonSelect,
-  IonTextarea,
-  ModalController,
-} from '@ionic/angular';
+import { ActionSheetController, IonSelect, IonTextarea } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { SocialAuthState } from 'src/libs/profile/models';
 import { Doc, DocView } from '../../models';
 import {
   addDocTag,
   copyClipboard,
   deleteDoc,
-  deleteDocConfirmed,
   editDoc,
   removeCloudDoc,
-  removeCloudDocConfirmed,
   removeDocTag,
   setDocComment,
   shareDoc,
@@ -68,7 +60,6 @@ export class AppDocWorkspaceComponent implements OnInit {
 
   constructor(
     private readonly store: Store,
-    private readonly modalController: ModalController,
     private readonly actionSheetController: ActionSheetController
   ) {}
 

@@ -26,13 +26,17 @@ export interface UploadImageModalView {
 })
 export class AppDocEditWorkspaceComponent implements OnInit {
   view$: Observable<UploadImageModalView>;
-  activeDocLabel$ = new BehaviorSubject<DocLabel>(null);
+  activeDocLabel$ = new BehaviorSubject<DocLabel>('unknown');
 
   @Input() title: string;
   @Input() documentId: string;
-  @Input() isNew = false;
+  @Input() documentLabel: DocLabel;
 
   readonly formTypes: OptItem[] = [
+    {
+      key: 'unknown',
+      label: 'Другое',
+    },
     {
       key: 'passport-rf',
       label: 'Гражданский Пасспорт РФ',
@@ -64,7 +68,7 @@ export class AppDocEditWorkspaceComponent implements OnInit {
     this.store.dispatch(
       updateDocFormatted({
         id: doc.id,
-        docFormatted: { ...docFormatted, kind: docLabel },
+        docFormatted: { ...docFormatted, kind: docLabel } as any,
       })
     );
 
