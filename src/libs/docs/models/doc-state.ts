@@ -11,14 +11,14 @@ export interface DocParsed {
   words: string[];
 }
 
-export type DocLabel = 'passport-rf-main-page';
+export type DocLabel = 'passport-rf';
 
 export interface DocLabeled {
   label: DocLabel;
 }
 
 export interface DocPassportRFMainPage {
-  kind: 'passport-rf-main-page';
+  kind: 'passport-rf';
   lastName: string;
   firstName: string;
   middleName: string;

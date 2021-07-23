@@ -4,7 +4,7 @@ import Fuse from 'fuse.js';
 
 const getDocTypeName = (docLabel: DocLabel) => {
     switch (docLabel) {
-        case 'passport-rf-main-page':
+        case 'passport-rf':
             return 'паспорт';
         default:
             return null;

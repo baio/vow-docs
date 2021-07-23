@@ -20,10 +20,10 @@ export class DocsDataAccessService {
                     words: ['lol', 'kek'],
                 },
                 labeled: {
-                    label: 'passport-rf-main-page',
+                    label: 'passport-rf',
                 },
                 formatted: {
-                    kind: 'passport-rf-main-page',
+                    kind: 'passport-rf',
                     lastName: 'putilov',
                     firstName: 'max',
                     middleName: 'alexandrovich',

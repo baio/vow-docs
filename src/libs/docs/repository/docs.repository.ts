@@ -20,7 +20,7 @@ const getDocFormattedPassportRFMainPageUpdateValues = (
 
 const getDocFormattedUpdateValues = (docFormatted: DocFormatted) => {
   switch (docFormatted.kind) {
-    case 'passport-rf-main-page':
+    case 'passport-rf':
       return getDocFormattedPassportRFMainPageUpdateValues(docFormatted);
     default:
       return null;

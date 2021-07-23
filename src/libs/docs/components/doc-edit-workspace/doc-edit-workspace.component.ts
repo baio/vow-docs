@@ -34,7 +34,7 @@ export class AppDocEditWorkspaceComponent implements OnInit {
 
   readonly formTypes: OptItem[] = [
     {
-      key: 'passport-rf-main-page',
+      key: 'passport-rf',
       label: 'Гражданский Пасспорт РФ',
     },
   ];

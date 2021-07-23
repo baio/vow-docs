@@ -60,7 +60,7 @@ export const parsePassportRFCloudText = (text: string) => {
   const lines = text.split('\n');
   if (lines[3] === 'ПАССПОРТ РФ') {
     const docFormatted = {
-      kind: 'passport-rf-main-page',
+      kind: 'passport-rf',
       lastName: lines[5] || null,
       firstName: lines[7] || null,
       middleName: lines[9] || null,

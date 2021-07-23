@@ -34,7 +34,7 @@ export interface DocumentsWorkspaceView {
 }
 
 const getCaption = (formatted: DocFormatted): DocCaption => {
-    if (formatted.kind === 'passport-rf-main-page') {
+    if (formatted.kind === 'passport-rf') {
         return {
             title:
                 formatted.lastName ||

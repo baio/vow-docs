@@ -150,7 +150,7 @@ export class AppDocEditFormComponent implements OnInit {
     }
 
     private updateForm() {
-        if (this.docLabel === 'passport-rf-main-page') {
+        if (this.docLabel === 'passport-rf') {
             this.docForm = docFormsHash.passportRFMainPage;
             this.formGroup = createForm(this.fb, this.docForm);
             if (this.docFormatted) {

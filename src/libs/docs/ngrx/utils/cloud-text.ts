@@ -11,7 +11,7 @@ export const formatCloudText = (doc: Doc) => {
   } as DocMeta;
   if (doc.formatted && doc.formatted) {
     switch (doc.formatted.kind) {
-      case 'passport-rf-main-page':
+      case 'passport-rf':
         return formatPassportRFCloudText(doc.formatted, meta);
     }
   } else {
