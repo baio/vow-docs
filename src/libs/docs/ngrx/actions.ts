@@ -83,6 +83,11 @@ export const setDocComment = createAction(
   props<{ id: string; comment: string }>()
 );
 
+export const setDocCommentDebounced = createAction(
+  '[Docs] Set Doc Comment Debounced',
+  props<{ id: string; comment: string }>()
+);
+
 export const uploadCloudDoc = createAction(
   '[Docs] Upload Cloud Doc',
   props<{ doc: Doc; date: number }>()

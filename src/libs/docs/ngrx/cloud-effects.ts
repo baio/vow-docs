@@ -9,21 +9,29 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, of } from 'rxjs';
 import {
+  bufferTime,
   catchError,
+  debounceTime,
   filter,
   map,
+  mergeMap,
   switchMap,
   take,
+  tap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { YaDiskService } from 'src/libs/ya-disk';
 import { DocsRepositoryService } from '../repository/docs.repository';
 import {
+  addDocTag,
   deleteDocConfirmed,
   removeCloudDoc,
   removeCloudDocConfirmed,
   removeCloudDocError,
   removeCloudDocSuccess,
+  removeDocTag,
+  setDocComment,
+  setDocCommentDebounced,
   updateDocFormatted,
   uploadCloudDoc,
   uploadCloudDocConfirmed,
@@ -219,9 +227,44 @@ export class CloudEffects {
     { dispatch: false }
   );
 
+  // TODO
+  /*
+  commentsChangeDebounce$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(setDocComment),
+      bufferTime(5000),
+      filter((arr) => arr.length > 0),
+      mergeMap((res) =>
+        res.reduceRight(
+          (acc, val) =>
+            acc.some((s) => s.id === val.id)
+              ? acc
+              : [
+                  setDocCommentDebounced({ id: val.id, comment: val.comment }),
+                  ...acc,
+                ],
+          []
+        )
+      )
+    )
+  );
+  */
+  commentsChangeDebounce$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(setDocComment),
+      debounceTime(5000),
+      map(({ id, comment }) => setDocCommentDebounced({ id, comment }))
+    )
+  );
+
   updateDocFormatted$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(updateDocFormatted),
+      ofType(
+        updateDocFormatted,
+        addDocTag,
+        removeDocTag,
+        setDocCommentDebounced
+      ),
       withLatestFrom(this.store.select(selectSocialAuthState)),
       filter(([_, socialAuthState]) => !!socialAuthState),
       switchMap(([{ id }, socialAuthState]) =>
