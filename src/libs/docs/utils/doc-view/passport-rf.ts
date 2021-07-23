@@ -32,7 +32,7 @@ export const passportRF = (doc: DocPassportRF): DocView => ({
     {
       col1: {
         label: 'Пол',
-        value: doc.sex === 'male' ? 'мужской' : 'женский',
+        value: doc.sex ? (doc.sex === 'male' ? 'мужской' : 'женский') : '',
       },
       col2: {
         label: 'Дата рождения',

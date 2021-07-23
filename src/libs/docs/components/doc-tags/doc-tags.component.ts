@@ -1,4 +1,4 @@
-import { EventEmitter, Output } from '@angular/core';
+import { ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ActionSheetController } from '@ionic/angular';
 import { TagsSelectorService } from '@app/tags';
@@ -15,7 +15,8 @@ export class AppDocTagsComponent {
   @Output() removeTag = new EventEmitter<string>();
   constructor(
     private readonly tagsSelectorService: TagsSelectorService,
-    private readonly actionSheetController: ActionSheetController
+    private readonly actionSheetController: ActionSheetController,
+    private readonly cdr: ChangeDetectorRef
   ) {}
 
   trackByTag(_, tag: string) {
@@ -42,6 +43,10 @@ export class AppDocTagsComponent {
     });
 
     await actionSheet.present();
+
+    await actionSheet.onWillDismiss();
+
+    this.cdr.markForCheck();
   }
 
   async onAddTag() {

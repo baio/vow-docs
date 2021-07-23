@@ -8,7 +8,7 @@ export const getDocFormattedPassportRFUpdateValues = (data: DocPassportRF) => ({
       : null,
 });
 
-export const getDocFormattedUnknownUpdateValues = (data: DocUnknown) => ({
+export const getEmpty = () => ({
   lastName: null,
   firstMiddleName: null,
 });
@@ -18,8 +18,8 @@ export const getDocFormattedUpdateValues = (docFormatted: DocFormatted) => {
     case 'passport-rf':
       return getDocFormattedPassportRFUpdateValues(docFormatted);
     case 'unknown':
-      return getDocFormattedUnknownUpdateValues(docFormatted);
+      return getEmpty();
     default:
-      return null;
+      return getEmpty();
   }
 };

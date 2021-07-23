@@ -1,12 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DbService } from '../../db';
-import {
-  Doc,
-  DocFormatted,
-  DocPassportRF,
-  DocState,
-  DocStored,
-} from '../models';
+import { Doc, DocFormatted, DocState, DocStored } from '../models';
 import { getDocFormattedUpdateValues } from './utils/get-formatted-update-values';
 
 @Injectable()
@@ -46,7 +40,7 @@ export class DocsRepositoryService {
     } else {
       const values = getDocFormattedUpdateValues(docFormatted);
       if (values) {
-        const content = JSON.stringify(docFormatted);
+        const content = docFormatted && JSON.stringify(docFormatted);
         const sqlCmd =
           'UPDATE docs SET lastName = ?, firstMiddleName = ?, content = ?, labeledLabel = ?  WHERE id = ?';
         const cmdValues = [

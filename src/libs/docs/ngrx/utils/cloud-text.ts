@@ -1,5 +1,6 @@
 import { Doc } from '../../models';
 import { DocMeta } from './doc-meta';
+import { formatEmptyCloudText } from './empty-cloud-text';
 import { formatPassportRFCloudText } from './passport-rf-cloud-text';
 import { formatUnknownCloudText } from './unknown-cloud-text';
 
@@ -16,9 +17,9 @@ export const formatCloudText = (doc: Doc) => {
       case 'unknown':
         return formatUnknownCloudText(doc.formatted, meta);
       default:
-        return null;
+        return formatEmptyCloudText(meta);
     }
   } else {
-    return null;
+    return formatEmptyCloudText(meta);
   }
 };
