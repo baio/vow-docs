@@ -10,7 +10,7 @@ import {
     displayDoc,
     editDoc,
     rehydrateDocs,
-    uploadImage,
+    addDocument,
 } from '../../ngrx/actions';
 import { selectDocsAsSortedList } from '../../ngrx/selectors';
 import { searchDocs } from './search-docs';
@@ -112,7 +112,7 @@ export class AppDocumentsWorkspaceComponent {
             const base64 = `data:image/${image.format};base64,${image.base64String}`;
             const id = v4();
             this.store.dispatch(
-                uploadImage({ id, base64, date: new Date().getTime() })
+                addDocument({ id, base64, date: new Date().getTime() })
             );
         } catch (err) {
             console.warn(err);

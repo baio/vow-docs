@@ -8,15 +8,13 @@ import {
   removeCloudDocConfirmed,
   removeDocTag,
   setDocComment,
-  setImageBase64,
   updateDocFormatted,
   updateDocState,
-  uploadCloudDoc,
   uploadCloudDocConfirmed,
   uploadCloudDocError,
   uploadCloudDocSuccess,
-  uploadImage,
-  uploadImageSuccess,
+  addDocument,
+  addDocSuccess,
 } from './actions';
 
 export const initialState: DocsState = {
@@ -25,17 +23,14 @@ export const initialState: DocsState = {
 
 export const docsReducer = createReducer(
   initialState,
-  on(uploadImage, (state, { id, base64, date }) =>
+  on(addDocument, (state, { id, base64, date }) =>
     assocPath(
       ['docs', id],
       { id, imgBase64: base64, date, upload: { status: 'progress' } },
       state
     )
   ),
-  on(setImageBase64, (state, { id, base64 }) =>
-    assocPath(['docs', id, 'imgBase64'], base64, state)
-  ),
-  on(uploadImageSuccess, (state, { id }) =>
+  on(addDocSuccess, (state, { id }) =>
     assocPath(['docs', id, 'upload', 'status'], 'success', state)
   ),
   on(updateDocState, (state, { id, docState }) =>

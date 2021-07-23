@@ -43,9 +43,9 @@ import {
   showFullScreenImage,
   updateDocFormatted,
   updateDocState,
-  uploadImage,
-  uploadImageError,
-  uploadImageSuccess,
+  addDocument,
+  addDocError,
+  addDocSuccess,
 } from './actions';
 import { selectDoc } from './selectors';
 
@@ -77,21 +77,29 @@ export class DocsEffects {
     )
   );
 
-  uploadImageRequest$ = createEffect(() =>
+  /*
+  addDoc$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(uploadImage),
+      ofType(addDocument),
       switchMap(({ id, base64 }) =>
         this.docsDataAccess.uploadImage(id, base64).pipe(mapTo(id))
       ),
-      map((id) => uploadImageSuccess({ id })),
-      catchError((_) => of(uploadImageError()))
+      map((id) => addDocSuccess({ id })),
+      catchError((_) => of(addDocError()))
+    )
+  );
+  */
+  addDoc$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addDocument),
+      map((doc) => addDocSuccess({ id: doc.id }))
     )
   );
 
   storeToDb$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(uploadImage),
+        ofType(addDocument),
         switchMap(({ id, base64 }) => this.docRepository.addDoc(id, base64))
       ),
     { dispatch: false }
@@ -128,7 +136,7 @@ export class DocsEffects {
 
   uploadImage$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(uploadImage),
+      ofType(addDocument),
       switchMap(async ({ id }) => {
         const modal = await this.modalController.create({
           component: AppDocEditWorkspaceComponent,

@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { SocialAuthProvider, SocialAuthState } from 'src/libs/profile/models';
+import { SocialAuthProvider } from 'src/libs/profile/models';
 import { Doc, DocFormatted, DocState } from '../models';
 
 export const rehydrateDocs = createAction('[Docs] Rehydrate Docs');
@@ -9,22 +9,17 @@ export const rehydrateDocsSuccess = createAction(
   props<{ docs: Doc[] }>()
 );
 
-export const uploadImage = createAction(
-  '[Docs] Upload Image',
+export const addDocument = createAction(
+  '[Docs] Add Doc',
   props<{ id: string; base64: string; date: number }>()
 );
 
-export const setImageBase64 = createAction(
-  '[Docs] Set Image Base64',
-  props<{ id: string; base64: string }>()
-);
-
-export const uploadImageSuccess = createAction(
-  '[Docs] Upload Image Success',
+export const addDocSuccess = createAction(
+  '[Docs] Add Doc Success',
   props<{ id: string }>()
 );
 
-export const uploadImageError = createAction('[Docs] Upload Image Error');
+export const addDocError = createAction('[Docs] Add Doc Error');
 
 export const updateDocState = createAction(
   '[Docs] Update Doc State',
