@@ -15,6 +15,8 @@ export const formatEmptyCloudText = (meta: DocMeta) => {
   ${flatStr(meta.comment)}
   СИСТЕМНАЯ ДАТА
   ${meta.date}
+  ПРИЛОЖЕНИЯ
+  ${flatTags(meta.attachments)}
   `;
   return text;
 };
@@ -26,6 +28,7 @@ export const emptyCloudText = (text: string) => {
       tags: unFlatTags(lines[5]),
       comment: unFlatStr(lines[7]),
       date: lines[9] ? +lines[9] : null,
+      attachments: unFlatTags(lines[11]),
     } as DocMeta;
     return {
       docFormatted: null,

@@ -20,6 +20,8 @@ export const formatUnknownCloudText = (
   ${flatStr(meta.comment)}
   СИСТЕМНАЯ ДАТА
   ${meta.date}
+  ПРИЛОЖЕНИЯ
+  ${flatTags(meta.attachments)}
   `;
   return text;
 };
@@ -36,6 +38,7 @@ export const parseUnknownCloudText = (text: string) => {
       tags: unFlatTags(lines[8]),
       comment: unFlatStr(lines[10]),
       date: lines[12] ? +lines[12] : null,
+      attachments: unFlatTags(lines[14]),
     } as DocMeta;
     return {
       docFormatted,

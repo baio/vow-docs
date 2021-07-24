@@ -118,9 +118,9 @@ export const docsReducer = createReducer(
   on(uploadCloudDocError, (state, { doc }) =>
     assocPath(['docs', doc.id, 'stored', 'status'], 'error', state)
   ),
-  on(removeCloudDocConfirmed, (state, { id }) => {
-    if (state.docs[id]) {
-      return assocPath(['docs', id, 'stored'], null as any, state);
+  on(removeCloudDocConfirmed, (state, { doc }) => {
+    if (state.docs[doc.id]) {
+      return assocPath(['docs', doc.id, 'stored'], null as any, state);
     } else {
       return state;
     }

@@ -53,6 +53,8 @@ export const formatPassportRFCloudText = (
   ${flatStr(meta.comment)}
   СИСТЕМНАЯ ДАТА
   ${meta.date}
+  ПРИЛОЖЕНИЯ
+  ${flatTags(meta.attachments)}
   `;
   return text;
 };
@@ -82,6 +84,7 @@ export const parsePassportRFCloudText = (text: string) => {
       tags: unFlatTags(lines[25]),
       comment: unFlatStr(lines[27]),
       date: lines[29] ? +lines[29] : null,
+      attachments: unFlatTags(lines[31]),
     } as DocMeta;
 
     return {

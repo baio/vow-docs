@@ -61,7 +61,7 @@ export class YaDiskService {
     );
   }
 
-  private removeFile(token: string, fileName: string) {
+  removeFile(token: string, fileName: string) {
     const url = this.getUrl(
       `resources?path=${VOW_DOCS_FOLDER_NAME}/${fileName}`
     );

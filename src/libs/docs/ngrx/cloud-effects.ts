@@ -7,7 +7,7 @@ import {
 import { AlertController } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { EMPTY, of } from 'rxjs';
+import { EMPTY, forkJoin, of } from 'rxjs';
 import { dispatch } from 'rxjs/internal/observable/pairs';
 import {
   catchError,
@@ -21,6 +21,7 @@ import {
 import { YaDiskService } from 'src/libs/ya-disk';
 import { DocsRepositoryService } from '../repository/docs.repository';
 import {
+  addDocAttachment,
   addDocTag,
   addDocument,
   deleteDocConfirmed,
@@ -28,6 +29,7 @@ import {
   removeCloudDocConfirmed,
   removeCloudDocError,
   removeCloudDocSuccess,
+  removeDocAttachment,
   removeDocTag,
   setDocComment,
   setDocCommentDebounced,
@@ -222,7 +224,7 @@ export class CloudEffects {
     this.actions$.pipe(
       ofType(deleteDocConfirmed),
       filter((f) => f.deleteFromCloud),
-      map(({ doc }) => removeCloudDocConfirmed({ id: doc.id }))
+      map(({ doc }) => removeCloudDocConfirmed({ doc }))
     )
   );
 
@@ -231,7 +233,7 @@ export class CloudEffects {
       ofType(removeCloudDoc),
       withLatestFrom(this.store.select(selectSocialAuthState)),
       filter(([_, socialAuthState]) => !!socialAuthState),
-      switchMap(async ([{ id }, socialAuthState]) => {
+      switchMap(async ([{ doc }, socialAuthState]) => {
         const alert = await this.alertController.create({
           header: 'Удалить документ из облака?',
           message: `Документ будет удален с вашего ${socialAuthState.provider} диска`,
@@ -245,7 +247,7 @@ export class CloudEffects {
 
         const { role } = await alert.onDidDismiss();
 
-        return role === 'ok' ? removeCloudDocConfirmed({ id }) : null;
+        return role === 'ok' ? removeCloudDocConfirmed({ doc }) : null;
       }),
       filter((f) => !!f)
     )
@@ -256,17 +258,17 @@ export class CloudEffects {
       ofType(removeCloudDocConfirmed),
       withLatestFrom(this.token$),
       filter(([_, token]) => !!token),
-      switchMap(([{ id }, token]) =>
-        this.yaDisk
-          .removeFiles({
-            token,
-            imgFileName: `${id}.jpeg`,
-            textFileName: `${id}.txt`,
-          })
-          .pipe(
-            map(() => removeCloudDocSuccess({ id })),
-            catchError((error) => of(removeCloudDocError({ error, id })))
-          )
+      switchMap(([{ doc }, token]) =>
+        forkJoin(
+          [
+            `${doc.id}.jpeg`,
+            `${doc.id}.txt`,
+            ...(doc.attachments || []).map((m) => `attachment-${m}.jpeg`),
+          ].map((m) => this.yaDisk.removeFile(token, m))
+        ).pipe(
+          map(() => removeCloudDocSuccess({ id: doc.id })),
+          catchError((error) => of(removeCloudDocError({ error, id: doc.id })))
+        )
       )
     )
   );
@@ -275,7 +277,9 @@ export class CloudEffects {
     () =>
       this.actions$.pipe(
         ofType(removeCloudDocConfirmed),
-        switchMap((doc) => this.docsRepository.updateDocStored(doc.id, null))
+        switchMap(({ doc }) =>
+          this.docsRepository.updateDocStored(doc.id, null)
+        )
       ),
     { dispatch: false }
   );
@@ -337,5 +341,62 @@ export class CloudEffects {
           );
       })
     )
+  );
+
+  //
+  addDocAttachment$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(addDocAttachment),
+        withLatestFrom(this.token$),
+        filter(([{ doc }, token]) => !!token && !!doc.stored),
+        switchMap(([{ doc, base64, id }, token]) =>
+          this.store.select(selectDoc(doc.id)).pipe(
+            take(1),
+            map(() => ({ doc, token, base64, attachmentId: id }))
+          )
+        ),
+        switchMap(({ doc, base64, token, attachmentId }) => {
+          const cloudText = formatCloudText(doc);
+          if (!cloudText) {
+            return EMPTY;
+          }
+          return this.yaDisk.uploadDocument({
+            token,
+            imageBase64: base64,
+            imgFileName: `attachment-${attachmentId}.jpeg`,
+            text: cloudText,
+            textFileName: `${doc.id}.txt`,
+          });
+        })
+      ),
+    { dispatch: false }
+  );
+
+  removeDocAttachments$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(removeDocAttachment),
+        withLatestFrom(this.token$),
+        filter(([{ doc }, token]) => !!token && !!doc.stored),
+        switchMap(([{ doc, attachmentIndex }, token]) =>
+          this.store.select(selectDoc(doc.id)).pipe(
+            take(1),
+            map(() => ({ doc, token, attachmentIndex }))
+          )
+        ),
+        switchMap(({ doc, token, attachmentIndex }) => {
+          const cloudText = formatCloudText(doc);
+          const attachmentId = doc.attachments[attachmentIndex];
+          if (!cloudText) {
+            return EMPTY;
+          }
+          return forkJoin([
+            this.yaDisk.uploadText(token, cloudText, `${doc.id}.txt`),
+            this.yaDisk.removeFile(token, `attachment-${attachmentId}.jpeg`),
+          ]);
+        })
+      ),
+    { dispatch: false }
   );
 }

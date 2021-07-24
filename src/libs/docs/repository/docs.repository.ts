@@ -105,7 +105,7 @@ export class DocsRepositoryService {
     console.log('$$$ deleteDoc result', res);
 
     // attachments
-    if (attachments.length > 0) {
+    if ((attachments || []).length > 0) {
       const sqlcmd1 = 'DELETE FROM attachments WHERE id IN (?)';
       const values1 = [attachments.join(',')];
       const res1 = await this.db.runCommand(sqlcmd1, values1);

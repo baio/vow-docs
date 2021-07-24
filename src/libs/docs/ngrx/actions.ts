@@ -110,12 +110,12 @@ export const uploadCloudDocError = createAction(
 
 export const removeCloudDoc = createAction(
   '[Docs] Remove Cloud Doc',
-  props<{ id: string }>()
+  props<{ doc: Doc }>()
 );
 
 export const removeCloudDocConfirmed = createAction(
   '[Docs] Remove Cloud Doc Confirmed',
-  props<{ id: string }>()
+  props<{ doc: Doc }>()
 );
 
 export const removeCloudDocSuccess = createAction(

@@ -176,7 +176,7 @@ export class AppDocWorkspaceComponent implements OnInit {
   }
 
   onCloudRemove(doc: Doc) {
-    this.store.dispatch(removeCloudDoc({ id: doc.id }));
+    this.store.dispatch(removeCloudDoc({ doc }));
   }
 
   async onImageCameraClick(doc: Doc) {

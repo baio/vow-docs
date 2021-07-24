@@ -9,6 +9,7 @@ export const formatCloudText = (doc: Doc) => {
     tags: doc.tags,
     date: doc.date,
     comment: doc.comment,
+    attachments: doc.attachments,
   } as DocMeta;
   if (doc.formatted) {
     switch (doc.formatted.kind) {
