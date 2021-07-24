@@ -222,7 +222,7 @@ export class CloudEffects {
     this.actions$.pipe(
       ofType(deleteDocConfirmed),
       filter((f) => f.deleteFromCloud),
-      map(({ id }) => removeCloudDocConfirmed({ id }))
+      map(({ doc }) => removeCloudDocConfirmed({ id: doc.id }))
     )
   );
 

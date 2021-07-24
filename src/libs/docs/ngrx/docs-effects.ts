@@ -254,7 +254,7 @@ export class DocsEffects {
 
         if (role === 'remove-device' || role === 'remove-everywhere') {
           return deleteDocConfirmed({
-            id: doc.id,
+            doc,
             deleteFromCloud: role === 'remove-everywhere',
           });
         } else {
@@ -269,10 +269,9 @@ export class DocsEffects {
     () =>
       this.actions$.pipe(
         ofType(deleteDocConfirmed),
-        tap(async ({ id }) => {
+        tap(async ({ doc }) => {
           await this.modalController.dismiss();
-          // this.router.navigate(['/tabs', 'docs']);
-          await this.docRepository.deleteDoc(id);
+          await this.docRepository.deleteDoc(doc.id, doc.attachments);
         })
       ),
     { dispatch: false }

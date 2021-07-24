@@ -8,8 +8,8 @@ import {
 import { selectSocialAuthState } from '@app/profile';
 import { ActionSheetController, IonSelect, IonTextarea } from '@ionic/angular';
 import { Store } from '@ngrx/store';
-import { forkJoin, Observable, of, zip } from 'rxjs';
-import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { v4 } from 'uuid';
 import { Doc, DocView } from '../../models';
 import {
@@ -27,7 +27,7 @@ import {
   updateDocImage,
   uploadCloudDoc,
 } from '../../ngrx/actions';
-import { selectDoc, selectDocAttachmentsBase64 } from '../../ngrx/selectors';
+import { selectDocWithAttachments } from '../../ngrx/selectors';
 import { CameraService } from '../../services/camera.service';
 import { docFormattedToView } from '../../utils';
 
@@ -74,34 +74,35 @@ export class AppDocWorkspaceComponent implements OnInit {
     const id$ = of(this.documentId);
     const socialAuthState$ = this.store.select(selectSocialAuthState);
     this.view$ = id$.pipe(
-      switchMap((id) =>
-        forkJoin([
-          this.store.select(selectDoc(id)).pipe(take(1)),
-          this.store.select(selectDocAttachmentsBase64(id)).pipe(take(1)),
-        ])
-      ),
+      switchMap((id) => this.store.select(selectDocWithAttachments(id))),
       withLatestFrom(socialAuthState$),
-      map(([[doc, attachmentsBase64], socialAuthState]) =>
-        doc
-          ? ({
-              doc,
-              docView: doc.formatted ? docFormattedToView(doc.formatted) : null,
-              attachmentsBase64,
-              cloudUploadStatus: socialAuthState
-                ? doc.stored
-                  ? doc.stored.status === 'error'
-                    ? 'online-error'
-                    : doc.stored.status === 'progress'
-                    ? 'online-progress'
-                    : 'online'
-                  : 'offline'
-                : doc.stored
-                ? 'hidden'
-                : 'offline',
-            } as UploadImageModalView)
-          : null
-      ),
-      tap(console.log)
+      map(([result, socialAuthState]) => {
+        if (!result) {
+          return null;
+        } else {
+          const { doc, attachments } = result;
+          return doc
+            ? ({
+                doc,
+                docView: doc.formatted
+                  ? docFormattedToView(doc.formatted)
+                  : null,
+                attachmentsBase64: attachments.map((m) => m.imgBase64),
+                cloudUploadStatus: socialAuthState
+                  ? doc.stored
+                    ? doc.stored.status === 'error'
+                      ? 'online-error'
+                      : doc.stored.status === 'progress'
+                      ? 'online-progress'
+                      : 'online'
+                    : 'offline'
+                  : doc.stored
+                  ? 'hidden'
+                  : 'offline',
+              } as UploadImageModalView)
+            : null;
+        }
+      })
     );
   }
 

@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { assocPath, fromPairs, omit, pipe } from 'lodash/fp';
+import { assocPath, fromPairs, omit, pipe, pullAt, remove } from 'lodash/fp';
 import { DocAttachment, DocsState } from '../models';
 import {
   addDocTag,
@@ -53,8 +53,8 @@ export const docsReducer = createReducer(
     state = assocPath(['attachments'], attachmentsHash, state);
     return state;
   }),
-  on(deleteDocConfirmed, (state, { id }) =>
-    assocPath(['docs'], omit(id, state.docs), state)
+  on(deleteDocConfirmed, (state, { doc }) =>
+    assocPath(['docs'], omit(doc.id, state.docs), state)
   ),
   on(
     updateDocFormatted,
@@ -147,7 +147,7 @@ export const docsReducer = createReducer(
     if (attachmentId) {
       // doc attachment
       const docAttachments = doc.attachments || [];
-      const updatedDocAttachments = docAttachments.splice(attachmentIndex, 1);
+      const updatedDocAttachments = pullAt([attachmentIndex], docAttachments);
       state = assocPath(
         ['docs', doc.id, 'attachments'],
         updatedDocAttachments,

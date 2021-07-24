@@ -96,12 +96,20 @@ export class DocsRepositoryService {
     console.log('$$$ setDocComment result', res);
   }
 
-  async deleteDoc(id: string) {
+  async deleteDoc(id: string, attachments: string[]) {
     // add one user with statement and values
     const sqlcmd = 'DELETE FROM docs WHERE id = ?';
     const values = [id];
     const res = await this.db.runCommand(sqlcmd, values);
     console.log('$$$ deleteDoc result', res);
+
+    // attachments
+    if (attachments.length > 0) {
+      const sqlcmd1 = 'DELETE FROM attachments WHERE id IN (?)';
+      const values1 = [attachments.join(',')];
+      const res1 = await this.db.runCommand(sqlcmd1, values1);
+      console.log('$$$ deleteDoc attachments result', res1);
+    }
   }
 
   private async addDocAttachmentToDoc(

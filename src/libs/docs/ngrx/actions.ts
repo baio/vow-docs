@@ -40,7 +40,7 @@ export const deleteDoc = createAction(
 
 export const deleteDocConfirmed = createAction(
   '[Docs] Delete Doc Confirmed',
-  props<{ id: string; deleteFromCloud: boolean }>()
+  props<{ doc: Doc; deleteFromCloud: boolean }>()
 );
 
 export const updateDocFormatted = createAction(
