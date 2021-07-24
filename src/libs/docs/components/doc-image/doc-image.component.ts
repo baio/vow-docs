@@ -4,8 +4,6 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
-  OnDestroy,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -26,11 +24,10 @@ export interface AppDocImageView {
   styleUrls: ['doc-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppDocImageComponent implements OnDestroy, AfterViewInit {
+export class AppDocImageComponent implements AfterViewInit {
   private readonly activeSlideIndex$ = new BehaviorSubject(0);
   private readonly imgBase64$ = new BehaviorSubject(null);
   private readonly attachmentsBase64$ = new BehaviorSubject<string[]>([]);
-  swiper: any;
   readonly view$: Observable<AppDocImageView>;
 
   @Input() set imgBase64(val: string) {
@@ -77,14 +74,11 @@ export class AppDocImageComponent implements OnDestroy, AfterViewInit {
     );
   }
 
-  async ngAfterViewInit() {
-    this.swiper = await this.ionSlides.getSwiper();
-    console.log('???', this.swiper);
-  }
-
-  async ngOnDestroy() {
-    this.swiper.destroy(true, true);
-    console.log(this.swiper);
+  ngAfterViewInit() {
+    // Workaround swiper does not work after second init
+    setTimeout(async () => {
+      (await this.ionSlides.getSwiper()).update();
+    }, 100);
   }
 
   trackByImage(_, img: string) {
