@@ -36,6 +36,7 @@ import {
   editDoc,
   rehydrateDocs,
   rehydrateDocsSuccess,
+  removeDocAttachment,
   removeDocTag,
   setDocComment,
   shareDoc,
@@ -382,6 +383,17 @@ export class DocsEffects {
         ofType(addDocAttachment),
         tap(({ doc, id, base64 }) => {
           this.docRepository.addDocAttachment(doc, id, base64);
+        })
+      ),
+    { dispatch: false }
+  );
+
+  removeDocAttachment$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(removeDocAttachment),
+        tap(({ doc, attachmentIndex }) => {
+          this.docRepository.removeDocAttachment(doc, attachmentIndex);
         })
       ),
     { dispatch: false }

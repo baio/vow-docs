@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { pullAt } from 'lodash/fp';
 import { DbService } from '../../db';
 import {
   Doc,
@@ -112,6 +113,7 @@ export class DocsRepositoryService {
     }
   }
 
+  //
   private async addDocAttachmentToDoc(
     doc: { id: string; attachments: string[] },
     attachmentId: string
@@ -143,6 +145,38 @@ export class DocsRepositoryService {
   ) {
     await this.addDocAttachmentToAttachments(attachmentId, imageBase64);
     await this.addDocAttachmentToDoc(doc, attachmentId);
+  }
+
+  //
+  private async removeDocAttachmentFromDoc(
+    doc: { id: string; attachments: string[] },
+    attachmentIndex: number
+  ) {
+    const sqlCmd = 'UPDATE docs SET attachments = ? WHERE id = ?';
+    const updatedAttachments = pullAt([attachmentIndex], doc.attachments || []);
+    const cmdValues = [
+      updatedAttachments.length > 0 ? updatedAttachments.join(',') : null,
+      doc.id,
+    ];
+    const res = await this.db.runCommand(sqlCmd, cmdValues);
+    console.log('$$$ removeDocAttachmentFromDoc', res);
+    //
+  }
+
+  private async removeDocAttachmentFromAttachments(attachmentId: string) {
+    const sqlcmd = 'DELETE FROM attachments WHERE id = ?';
+    const values = [attachmentId];
+    const res = await this.db.runCommand(sqlcmd, values);
+    console.log('$$$ removeDocAttachmentFromAttachments', res);
+  }
+
+  async removeDocAttachment(
+    doc: { id: string; attachments: string[] },
+    attachmentIndex: number
+  ) {
+    const attachmentId = doc.attachments[attachmentIndex];
+    await this.removeDocAttachmentFromDoc(doc, attachmentIndex);
+    await this.removeDocAttachmentFromAttachments(attachmentId);
   }
 
   async getDocs() {
