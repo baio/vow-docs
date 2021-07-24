@@ -15,6 +15,7 @@ import {
   uploadCloudDocSuccess,
   addDocument,
   addDocSuccess,
+  updateDocImage,
 } from './actions';
 
 export const initialState: DocsState = {
@@ -35,6 +36,9 @@ export const docsReducer = createReducer(
   ),
   on(updateDocState, (state, { id, docState }) =>
     assocPath(['docs', id], { ...state.docs[id], ...docState }, state)
+  ),
+  on(updateDocImage, (state, { doc, base64 }) =>
+    assocPath(['docs', doc.id, 'imgBase64'], base64, state)
   ),
   on(setDocComment, (state, { id, comment }) =>
     assocPath(['docs', id, 'comment'], comment, state)

@@ -31,6 +31,15 @@ export class DocsRepositoryService {
     console.log('$$$ updateDocState result', res);
   }
 
+  async updateDocImage(id: string, base64: string) {
+    // add one user with statement and values
+    const sqlcmd = `UPDATE docs SET imgBase64 = ? WHERE id = ?`;
+    const values = [base64, id];
+
+    const res = await this.db.runCommand(sqlcmd, values);
+    console.log('$$$ updateDocImage result', res);
+  }
+
   async updateDocFormatted(id: string, docFormatted: DocFormatted) {
     if (!docFormatted) {
       const sqlCmd =

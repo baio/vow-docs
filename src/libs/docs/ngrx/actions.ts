@@ -127,3 +127,8 @@ export const removeCloudDocError = createAction(
   '[Docs] Remove Cloud Doc Error',
   props<{ id: string; error: any }>()
 );
+
+export const updateDocImage = createAction(
+  '[Docs] Update Doc Image',
+  props<{ doc: Doc; base64: string }>()
+);

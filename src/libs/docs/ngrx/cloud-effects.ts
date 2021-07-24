@@ -8,6 +8,7 @@ import { AlertController } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, of } from 'rxjs';
+import { dispatch } from 'rxjs/internal/observable/pairs';
 import {
   catchError,
   debounceTime,
@@ -31,6 +32,7 @@ import {
   setDocComment,
   setDocCommentDebounced,
   updateDocFormatted,
+  updateDocImage,
   uploadCloudDoc,
   uploadCloudDocConfirmed,
   uploadCloudDocError,
@@ -83,6 +85,24 @@ export class CloudEffects {
           )
       )
     )
+  );
+
+  updateDocImage$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(updateDocImage),
+        filter(({ doc }) => !!doc.stored),
+        withLatestFrom(this.store.select(selectSocialAuthState)),
+        filter(([_, socialAuthState]) => !!socialAuthState),
+        switchMap(([{ doc, base64 }, socialAuthState]) =>
+          this.yaDisk.uploadImage(
+            socialAuthState.token,
+            base64,
+            `${doc.id}.jpeg`
+          )
+        )
+      ),
+    { dispatch: false }
   );
 
   uploadDocument$ = createEffect(() =>

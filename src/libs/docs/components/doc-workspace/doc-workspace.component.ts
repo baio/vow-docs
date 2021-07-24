@@ -21,6 +21,7 @@ import {
   setDocComment,
   shareDoc,
   showFullScreenImage,
+  updateDocImage,
   uploadCloudDoc,
 } from '../../ngrx/actions';
 import { selectDoc } from '../../ngrx/selectors';
@@ -170,6 +171,7 @@ export class AppDocWorkspaceComponent implements OnInit {
   async onImageCameraClick(doc: Doc) {
     const result = await this.cameraService.getPhoto();
     if (result) {
+      this.store.dispatch(updateDocImage({ doc, base64: result.dataString }));
     }
   }
 

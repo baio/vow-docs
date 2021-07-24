@@ -45,6 +45,7 @@ import {
   addDocument,
   addDocError,
   addDocSuccess,
+  updateDocImage,
 } from './actions';
 import { selectDoc } from './selectors';
 
@@ -93,11 +94,22 @@ export class DocsEffects {
     )
   );
 
-  storeToDb$ = createEffect(
+  addDocToDb$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(addDocument),
         switchMap(({ id, base64 }) => this.docRepository.addDoc(id, base64))
+      ),
+    { dispatch: false }
+  );
+
+  updateDocImageInDb$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(updateDocImage),
+        switchMap(({ doc, base64 }) =>
+          this.docRepository.updateDocImage(doc.id, base64)
+        )
       ),
     { dispatch: false }
   );
