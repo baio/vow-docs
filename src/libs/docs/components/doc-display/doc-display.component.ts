@@ -15,6 +15,7 @@ import { DocView, DocViewFieldOrRow } from '../../models';
 })
 export class AppDocDisplayComponent {
   @Input() imgBase64: string;
+  @Input() attachmentsBase64: string[];
   @Input() docView: DocView;
 
   @Output() imageClick = new EventEmitter();

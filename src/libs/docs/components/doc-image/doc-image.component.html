@@ -1,5 +1,9 @@
 <div class="img-content">
-  <img class="doc-image" *ngIf="imgBase64; else imageSkeleton" [src]="imgBase64" />
+  <ion-slides pager="true" [options]="slideOpts">
+    <ion-slide *ngFor="let img of images; tackBy: trackByImage">
+      <img class="doc-image" [src]="img" />
+    </ion-slide>
+  </ion-slides>
   <div class="title-overlay">
     <ion-fab-button size="small" color="primary"
       (click)="$event.preventDefault(); $event.stopPropagation(); cameraClick.emit()">
@@ -11,6 +15,3 @@
     </ion-fab-button>
   </div>
 </div>
-<ng-template #imageSkeleton>
-  <ion-skeleton-text class="doc-image-placeholder" animated></ion-skeleton-text>
-</ng-template>

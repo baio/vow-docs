@@ -8,8 +8,8 @@ import {
 import { selectSocialAuthState } from '@app/profile';
 import { ActionSheetController, IonSelect, IonTextarea } from '@ionic/angular';
 import { Store } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { forkJoin, Observable, of, zip } from 'rxjs';
+import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { v4 } from 'uuid';
 import { Doc, DocView } from '../../models';
 import {
@@ -26,7 +26,7 @@ import {
   updateDocImage,
   uploadCloudDoc,
 } from '../../ngrx/actions';
-import { selectDoc } from '../../ngrx/selectors';
+import { selectDoc, selectDocAttachmentsBase64 } from '../../ngrx/selectors';
 import { CameraService } from '../../services/camera.service';
 import { docFormattedToView } from '../../utils';
 
@@ -47,6 +47,7 @@ export interface UploadImageModalView {
   doc: Doc;
   docView: DocView;
   cloudUploadStatus: CloudUploadStatus;
+  attachmentsBase64: string[];
 }
 
 @Component({
@@ -72,13 +73,19 @@ export class AppDocWorkspaceComponent implements OnInit {
     const id$ = of(this.documentId);
     const socialAuthState$ = this.store.select(selectSocialAuthState);
     this.view$ = id$.pipe(
-      switchMap((id) => this.store.select(selectDoc(id))),
+      switchMap((id) =>
+        forkJoin([
+          this.store.select(selectDoc(id)).pipe(take(1)),
+          this.store.select(selectDocAttachmentsBase64(id)).pipe(take(1)),
+        ])
+      ),
       withLatestFrom(socialAuthState$),
-      map(([doc, socialAuthState]) =>
+      map(([[doc, attachmentsBase64], socialAuthState]) =>
         doc
           ? ({
               doc,
               docView: doc.formatted ? docFormattedToView(doc.formatted) : null,
+              attachmentsBase64,
               cloudUploadStatus: socialAuthState
                 ? doc.stored
                   ? doc.stored.status === 'error'
