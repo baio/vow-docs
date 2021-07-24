@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { DbService } from '../../db';
-import { Doc, DocFormatted, DocState, DocStored } from '../models';
+import {
+  Doc,
+  DocAttachment,
+  DocFormatted,
+  DocState,
+  DocStored,
+} from '../models';
 import { getDocFormattedUpdateValues } from './utils/get-formatted-update-values';
 
 @Injectable()
@@ -98,6 +104,39 @@ export class DocsRepositoryService {
     console.log('$$$ deleteDoc result', res);
   }
 
+  private async addDocAttachmentToDoc(
+    doc: { id: string; attachments: string[] },
+    attachmentId: string
+  ) {
+    const sqlCmd = 'UPDATE docs SET attachments = ? WHERE id = ?';
+    const updatedAttachments = [attachmentId, ...(doc.attachments || [])].join(
+      ','
+    );
+    const cmdValues = [updatedAttachments, doc.id];
+    const res = await this.db.runCommand(sqlCmd, cmdValues);
+    console.log('$$$ addDocAttachmentToDoc', res);
+    //
+  }
+
+  private async addDocAttachmentToAttachments(
+    attachmentId: string,
+    imageBase64: string
+  ) {
+    const sqlcmd = 'INSERT INTO attachments (id,imgBase64) VALUES (?,?)';
+    const values = [attachmentId, imageBase64];
+    const res = await this.db.runCommand(sqlcmd, values);
+    console.log('$$$ addDocAttachmentToAttachments', res);
+  }
+
+  async addDocAttachment(
+    doc: { id: string; attachments: string[] },
+    attachmentId: string,
+    imageBase64: string
+  ) {
+    await this.addDocAttachmentToAttachments(attachmentId, imageBase64);
+    await this.addDocAttachmentToDoc(doc, attachmentId);
+  }
+
   async getDocs() {
     // add one user with statement and values
     const sqlcmd = 'SELECT * FROM docs ORDER BY createDate DESC;';
@@ -130,7 +169,23 @@ export class DocsRepositoryService {
           formatted: m.content ? JSON.parse(m.content) : null,
           tags: m.tags ? m.tags.split(',') : [],
           comment: m.comment,
+          attachments: m.attachments ? m.attachments.split(',') : [],
         } as Doc)
+    );
+  }
+
+  async getAttachments() {
+    // add one user with statement and values
+    const sqlcmd = 'SELECT * FROM attachments;';
+    const res = await this.db.runQuery(sqlcmd);
+    console.log('$$$ getAttachments result', res);
+    const values = res.values;
+    return values.map(
+      (m) =>
+        ({
+          id: m.id,
+          imgBase64: m.imgBase64,
+        } as DocAttachment)
     );
   }
 }

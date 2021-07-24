@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { assocPath, fromPairs, omit, pipe } from 'lodash/fp';
-import { DocsState } from '../models';
+import { DocAttachment, DocsState } from '../models';
 import {
   addDocTag,
   deleteDocConfirmed,
@@ -16,10 +16,12 @@ import {
   addDocument,
   addDocSuccess,
   updateDocImage,
+  addDocAttachment,
 } from './actions';
 
 export const initialState: DocsState = {
   docs: {},
+  attachments: {},
 };
 
 export const docsReducer = createReducer(
@@ -43,9 +45,12 @@ export const docsReducer = createReducer(
   on(setDocComment, (state, { id, comment }) =>
     assocPath(['docs', id, 'comment'], comment, state)
   ),
-  on(rehydrateDocsSuccess, (state, { docs }) => {
-    const hash = fromPairs(docs.map((m) => [m.id, m]));
-    return assocPath(['docs'], hash, state);
+  on(rehydrateDocsSuccess, (state, { docs, attachments }) => {
+    const docsHash = fromPairs(docs.map((m) => [m.id, m]));
+    const attachmentsHash = fromPairs(attachments.map((m) => [m.id, m]));
+    state = assocPath(['docs'], docsHash, state);
+    state = assocPath(['attachments'], attachmentsHash, state);
+    return state;
   }),
   on(deleteDocConfirmed, (state, { id }) =>
     assocPath(['docs'], omit(id, state.docs), state)
@@ -118,5 +123,22 @@ export const docsReducer = createReducer(
     } else {
       return state;
     }
+  }),
+  on(addDocAttachment, (state, { id, doc, base64 }) => {
+    // doc attachment
+    const docAttachments = doc.attachments || [];
+    const updatedDocAttachments = [id, ...docAttachments];
+    state = assocPath(
+      ['docs', doc.id, 'attachments'],
+      updatedDocAttachments,
+      state
+    );
+    // attachments
+    const attachment = {
+      id,
+      imgBase64: base64,
+    } as DocAttachment;
+    state = assocPath(['attachments', id], attachment, state);
+    return state;
   })
 );

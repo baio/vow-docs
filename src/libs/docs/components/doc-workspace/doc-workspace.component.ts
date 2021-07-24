@@ -10,8 +10,10 @@ import { ActionSheetController, IonSelect, IonTextarea } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { v4 } from 'uuid';
 import { Doc, DocView } from '../../models';
 import {
+  addDocAttachment,
   addDocTag,
   copyClipboard,
   deleteDoc,
@@ -175,5 +177,13 @@ export class AppDocWorkspaceComponent implements OnInit {
     }
   }
 
-  onImageLinkClick(doc: Doc) {}
+  async onImageLinkClick(doc: Doc) {
+    const result = await this.cameraService.getPhoto();
+    if (result) {
+      const id = v4();
+      this.store.dispatch(
+        addDocAttachment({ doc, id, base64: result.dataString })
+      );
+    }
+  }
 }

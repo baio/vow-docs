@@ -51,8 +51,15 @@ export interface Doc extends DocState {
   date: number;
   tags: string[];
   comment: string;
+  attachments: string[];
+}
+
+export interface DocAttachment {
+  id: string;
+  imgBase64: string;
 }
 
 export interface DocsState {
   docs: { [id: string]: Doc };
+  attachments: { [id: string]: DocAttachment };
 }

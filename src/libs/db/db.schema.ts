@@ -12,12 +12,17 @@ CREATE TABLE IF NOT EXISTS docs (
     firstMiddleName TEXT,
     createDate INT,
     tags TEXT,
-    comment TEXT
+    comment TEXT,
+    attachments TEXT
+);
+CREATE TABLE IF NOT EXISTS attachments (
+  id TEXT PRIMARY KEY NOT NULL,
+  imgBase64 TEXT
 );
 CREATE TABLE IF NOT EXISTS tags (
     id TEXT PRIMARY KEY NOT NULL,
     createDate TEXT
 );
 
-PRAGMA user_version = 2;
+PRAGMA user_version = 1;
 `;

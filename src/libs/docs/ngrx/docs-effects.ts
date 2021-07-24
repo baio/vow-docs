@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { selectSocialAuthState } from '@app/profile';
 import { appStarted } from '@app/shared';
 import { Clipboard } from '@capacitor/clipboard';
@@ -12,13 +11,11 @@ import {
 } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
 import {
-  catchError,
   filter,
   map,
-  mapTo,
   switchMap,
+  take,
   tap,
   withLatestFrom,
 } from 'rxjs/operators';
@@ -28,7 +25,10 @@ import { AppFullScreenImageComponent } from '../components/full-screen-image/ful
 import { DocsRepositoryService } from '../repository/docs.repository';
 import { docToText } from '../utils';
 import {
+  addDocAttachment,
+  addDocSuccess,
   addDocTag,
+  addDocument,
   copyClipboard,
   deleteDoc,
   deleteDocConfirmed,
@@ -41,11 +41,8 @@ import {
   shareDoc,
   showFullScreenImage,
   updateDocFormatted,
-  updateDocState,
-  addDocument,
-  addDocError,
-  addDocSuccess,
   updateDocImage,
+  updateDocState,
 } from './actions';
 import { selectDoc } from './selectors';
 
@@ -70,8 +67,12 @@ export class DocsEffects {
   rehydrateDocs$ = createEffect(() =>
     this.actions$.pipe(
       ofType(rehydrateDocs),
-      switchMap(() => this.docRepository.getDocs()),
-      map((docs) => rehydrateDocsSuccess({ docs }))
+      switchMap(async () => {
+        const docs = await this.docRepository.getDocs();
+        const attachments = await this.docRepository.getAttachments();
+        return { docs, attachments };
+      }),
+      map((result) => rehydrateDocsSuccess(result))
     )
   );
 
@@ -368,9 +369,20 @@ export class DocsEffects {
     () =>
       this.actions$.pipe(
         ofType(addDocTag, removeDocTag),
-        switchMap(({ id }) => this.store.select(selectDoc(id))),
+        switchMap(({ id }) => this.store.select(selectDoc(id)).pipe(take(1))),
         tap((doc) => {
           this.docRepository.setDocTags(doc.id, doc.tags);
+        })
+      ),
+    { dispatch: false }
+  );
+
+  addDocAttachment$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(addDocAttachment),
+        tap(({ doc, id, base64 }) => {
+          this.docRepository.addDocAttachment(doc, id, base64);
         })
       ),
     { dispatch: false }

@@ -1,12 +1,12 @@
 import { createAction, props } from '@ngrx/store';
 import { SocialAuthProvider } from 'src/libs/profile/models';
-import { Doc, DocFormatted, DocState } from '../models';
+import { Doc, DocAttachment, DocFormatted, DocState } from '../models';
 
 export const rehydrateDocs = createAction('[Docs] Rehydrate Docs');
 
 export const rehydrateDocsSuccess = createAction(
   '[Docs] Rehydrate Docs Success',
-  props<{ docs: Doc[] }>()
+  props<{ docs: Doc[]; attachments: DocAttachment[] }>()
 );
 
 export const addDocument = createAction(
@@ -131,4 +131,9 @@ export const removeCloudDocError = createAction(
 export const updateDocImage = createAction(
   '[Docs] Update Doc Image',
   props<{ doc: Doc; base64: string }>()
+);
+
+export const addDocAttachment = createAction(
+  '[Docs] Add Doc Attachment',
+  props<{ doc: Doc; id: string; base64: string }>()
 );
