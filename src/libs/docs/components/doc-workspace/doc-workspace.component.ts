@@ -19,6 +19,7 @@ import {
   deleteDoc,
   editDoc,
   removeCloudDoc,
+  removeDocAttachment,
   removeDocTag,
   setDocComment,
   shareDoc,
@@ -192,5 +193,9 @@ export class AppDocWorkspaceComponent implements OnInit {
         addDocAttachment({ doc, id, base64: result.dataString })
       );
     }
+  }
+
+  async onImageUnLinkClick(doc: Doc, index: number) {
+    this.store.dispatch(removeDocAttachment({ doc, attachmentIndex: index }));
   }
 }

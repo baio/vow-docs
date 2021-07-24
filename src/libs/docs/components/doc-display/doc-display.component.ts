@@ -21,6 +21,7 @@ export class AppDocDisplayComponent {
   @Output() imageClick = new EventEmitter();
   @Output() cameraClick = new EventEmitter();
   @Output() linkClick = new EventEmitter();
+  @Output() unlinkClick = new EventEmitter<number>();
 
   getFieldType(field: DocViewFieldOrRow): 'one-col' | 'two-col' {
     if ('col1' in field) {

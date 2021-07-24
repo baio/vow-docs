@@ -1,17 +1,15 @@
 <div class="img-content">
-  <ion-slides pager="true" [options]="slideOpts">
-    <ion-slide *ngFor="let img of images; tackBy: trackByImage">
-      <img class="doc-image" [src]="img" />
+  <ion-slides pager="true" [options]="slideOpts" (ionSlideDidChange)="onSlideChanged()">
+    <ion-slide *ngFor="let img of images; trackBy: trackByImage">
+      <img class="doc-image" [src]="img.src" />
     </ion-slide>
   </ion-slides>
   <div class="title-overlay">
-    <ion-fab-button size="small" color="primary"
-      (click)="$event.preventDefault(); $event.stopPropagation(); cameraClick.emit()">
+    <ion-fab-button size="small" color="primary" *ngIf="showCameraButton" (click)="onCameraClicked($event)">
       <ion-icon name="camera-outline"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button size="small" color="light"
-      (click)="$event.preventDefault(); $event.stopPropagation();linkClick.emit()">
-      <ion-icon name="link-outline"></ion-icon>
+    <ion-fab-button size="small" color="light" (click)="onLinkClicked($event)">
+      <ion-icon [name]="linkButtonMode === 'link' ? 'link-outline' : 'unlink-outline'"></ion-icon>
     </ion-fab-button>
   </div>
 </div>

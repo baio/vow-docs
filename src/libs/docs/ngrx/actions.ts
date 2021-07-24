@@ -137,3 +137,8 @@ export const addDocAttachment = createAction(
   '[Docs] Add Doc Attachment',
   props<{ doc: Doc; id: string; base64: string }>()
 );
+
+export const removeDocAttachment = createAction(
+  '[Docs] Remove Doc Attachment',
+  props<{ doc: Doc; attachmentIndex: number }>()
+);

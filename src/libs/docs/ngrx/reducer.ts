@@ -17,6 +17,7 @@ import {
   addDocSuccess,
   updateDocImage,
   addDocAttachment,
+  removeDocAttachment,
 } from './actions';
 
 export const initialState: DocsState = {
@@ -139,6 +140,26 @@ export const docsReducer = createReducer(
       imgBase64: base64,
     } as DocAttachment;
     state = assocPath(['attachments', id], attachment, state);
+    return state;
+  }),
+  on(removeDocAttachment, (state, { doc, attachmentIndex }) => {
+    const attachmentId = doc.attachments[attachmentIndex];
+    if (attachmentId) {
+      // doc attachment
+      const docAttachments = doc.attachments || [];
+      const updatedDocAttachments = docAttachments.splice(attachmentIndex, 1);
+      state = assocPath(
+        ['docs', doc.id, 'attachments'],
+        updatedDocAttachments,
+        state
+      );
+    }
+    // attachments
+    state = assocPath(
+      ['attachments'],
+      omit(attachmentId, state.attachments),
+      state
+    );
     return state;
   })
 );
