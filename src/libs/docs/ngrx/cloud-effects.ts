@@ -20,6 +20,7 @@ import {
 import { YaDiskService } from 'src/libs/ya-disk';
 import { DocsRepositoryService } from '../repository/docs.repository';
 import {
+  addCloudDocConfirmed,
   addDocAttachment,
   addDocTag,
   addDocument,
@@ -65,12 +66,24 @@ export class CloudEffects {
           !!profileState.socialAuthState &&
           !!profileState.config.uploadToCloudAutomatically
       ),
-      switchMap(([{ id }, profileState]) =>
+      switchMap(([{ id, date }, profileState]) =>
         this.store.select(selectDoc(id)).pipe(
           take(1),
-          map((doc) => ({ doc, socialAuthState: profileState.socialAuthState }))
+          map((doc) =>
+            addCloudDocConfirmed({
+              doc,
+              socialAuthState: profileState.socialAuthState,
+              date,
+            })
+          )
         )
-      ),
+      )
+    )
+  );
+
+  addCloudDocConfirmed$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addCloudDocConfirmed),
       switchMap(({ doc, socialAuthState }) =>
         this.yaDisk
           .uploadImage(socialAuthState.token, doc.imgBase64, `${doc.id}.jpeg`)

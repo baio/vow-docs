@@ -18,6 +18,7 @@ import {
   updateDocImage,
   addDocAttachment,
   removeDocAttachment,
+  addCloudDocConfirmed,
 } from './actions';
 
 export const initialState: DocsState = {
@@ -97,7 +98,7 @@ export const docsReducer = createReducer(
       return state;
     }
   }),
-  on(uploadCloudDocConfirmed, (state, { doc, date }) =>
+  on(addCloudDocConfirmed, uploadCloudDocConfirmed, (state, { doc, date }) =>
     assocPath(
       ['docs', doc.id, 'stored'],
       {
