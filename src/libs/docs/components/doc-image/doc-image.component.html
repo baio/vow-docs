@@ -1,16 +1,16 @@
 <div class="img-content">
-    <img
-        class="doc-image"
-        *ngIf="imgBase64; else imageSkeleton"
-        [src]="imgBase64"
-    />
-    <div *ngIf="title" class="title-overlay">
-        <div style="margin-left: 5px; font-size: small">{{ title }}</div>
-    </div>
+  <img class="doc-image" *ngIf="imgBase64; else imageSkeleton" [src]="imgBase64" />
+  <div class="title-overlay">
+    <ion-fab-button size="small" color="primary"
+      (click)="$event.preventDefault(); $event.stopPropagation(); cameraClick.emit()">
+      <ion-icon name="camera-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button size="small" color="light"
+      (click)="$event.preventDefault(); $event.stopPropagation();linkClick.emit()">
+      <ion-icon name="link-outline"></ion-icon>
+    </ion-fab-button>
+  </div>
 </div>
 <ng-template #imageSkeleton>
-    <ion-skeleton-text
-        class="doc-image-placeholder"
-        animated
-    ></ion-skeleton-text>
+  <ion-skeleton-text class="doc-image-placeholder" animated></ion-skeleton-text>
 </ng-template>

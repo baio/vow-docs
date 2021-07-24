@@ -19,8 +19,8 @@ import { DocsEffects } from './ngrx/docs-effects';
 import { CloudEffects } from './ngrx/cloud-effects';
 import { docsReducer } from './ngrx/reducer';
 import { DocsRepositoryService } from './repository/docs.repository';
-import { DocsDataAccessService } from './services/docs.data-access.service';
-import { ImageService } from './services/image.service';
+import { AppDocListImageComponent } from './components/doc-list-image/doc-list-image.component';
+import { CameraService } from './services/camera.service';
 
 @NgModule({
   imports: [
@@ -37,6 +37,7 @@ import { ImageService } from './services/image.service';
   declarations: [
     AppDocumentsWorkspaceComponent,
     AppDocImageComponent,
+    AppDocListImageComponent,
     AppDocEditWorkspaceComponent,
     AppDocDisplayComponent,
     AppDocWorkspaceComponent,
@@ -44,7 +45,7 @@ import { ImageService } from './services/image.service';
     AppFullScreenImageComponent,
     AppDocTagsComponent,
   ],
-  providers: [DocsDataAccessService, ImageService, DocsRepositoryService],
+  providers: [DocsRepositoryService, CameraService],
   exports: [AppDocumentsWorkspaceComponent, AppDocEditWorkspaceComponent],
 })
 export class AppDocsModule {}

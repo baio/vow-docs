@@ -24,6 +24,7 @@ import {
   uploadCloudDoc,
 } from '../../ngrx/actions';
 import { selectDoc } from '../../ngrx/selectors';
+import { CameraService } from '../../services/camera.service';
 import { docFormattedToView } from '../../utils';
 
 /**
@@ -60,7 +61,8 @@ export class AppDocWorkspaceComponent implements OnInit {
 
   constructor(
     private readonly store: Store,
-    private readonly actionSheetController: ActionSheetController
+    private readonly actionSheetController: ActionSheetController,
+    private readonly cameraService: CameraService
   ) {}
 
   ngOnInit() {
@@ -164,4 +166,12 @@ export class AppDocWorkspaceComponent implements OnInit {
   onCloudRemove(doc: Doc) {
     this.store.dispatch(removeCloudDoc({ id: doc.id }));
   }
+
+  async onImageCameraClick(doc: Doc) {
+    const result = await this.cameraService.getPhoto();
+    if (result) {
+    }
+  }
+
+  onImageLinkClick(doc: Doc) {}
 }

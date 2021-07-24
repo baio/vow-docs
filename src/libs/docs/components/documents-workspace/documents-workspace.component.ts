@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Camera, CameraResultType } from '@capacitor/camera';
 import { Store } from '@ngrx/store';
 import { chunk } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
@@ -8,8 +7,10 @@ import { v4 } from 'uuid';
 import { Doc } from '../../models';
 import { addDocument, displayDoc } from '../../ngrx/actions';
 import { selectDocsAsSortedList } from '../../ngrx/selectors';
+import { CameraService } from '../../services/camera.service';
 import { searchDocs } from './search-docs';
 import { DocCaption, getCaption } from './utils/get-caption';
+
 export interface DocView extends Doc {
   caption?: DocCaption;
 }
@@ -41,7 +42,10 @@ export class AppDocumentsWorkspaceComponent {
   readonly search$ = new BehaviorSubject<string>(null);
   readonly view$: Observable<DocumentsWorkspaceView>;
 
-  constructor(private readonly store: Store) {
+  constructor(
+    private readonly store: Store,
+    private readonly cameraService: CameraService
+  ) {
     const docs$ = store.select(selectDocsAsSortedList);
     const rows$ = combineLatest([docs$, this.search$]).pipe(
       map(([docs, search]) => searchDocs(docs, search)),
@@ -63,34 +67,28 @@ export class AppDocumentsWorkspaceComponent {
     return row.first.id;
   }
 
-  async onFileSelected(fileInput: HTMLInputElement) {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        // allowEditing: true,
-        resultType: CameraResultType.Base64,
-        saveToGallery: false,
-        preserveAspectRatio: true,
-        width: 1500,
-      });
-
-      // image.webPath will contain a path that can be set as an image src.
-      // You can access the original file using image.path, which can be
-      // passed to the Filesystem API to read the raw data of the image,
-      // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
-
-      const base64 = `data:image/${image.format};base64,${image.base64String}`;
+  async onFileSelected() {
+    const result = await this.cameraService.getPhoto();
+    if (result) {
       const id = v4();
       this.store.dispatch(
-        addDocument({ id, base64, date: new Date().getTime() })
+        addDocument({
+          id,
+          base64: result.dataString,
+          date: new Date().getTime(),
+        })
       );
-    } catch (err) {
-      console.warn(err);
     }
   }
 
   onSearchChange(evt: any) {
     const search = evt.detail.value;
     this.search$.next(search);
+  }
+
+  getTitle(doc: DocView) {
+    return doc.caption
+      ? (doc.caption.subTitle || '') + ' ' + (doc.caption.title || '')
+      : null;
   }
 }

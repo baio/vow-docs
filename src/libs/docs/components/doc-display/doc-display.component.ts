@@ -18,6 +18,8 @@ export class AppDocDisplayComponent {
   @Input() docView: DocView;
 
   @Output() imageClick = new EventEmitter();
+  @Output() cameraClick = new EventEmitter();
+  @Output() linkClick = new EventEmitter();
 
   getFieldType(field: DocViewFieldOrRow): 'one-col' | 'two-col' {
     if ('col1' in field) {

@@ -26,7 +26,6 @@ import { AppDocEditWorkspaceComponent } from '../components/doc-edit-workspace/d
 import { AppDocWorkspaceComponent } from '../components/doc-workspace/doc-workspace.component';
 import { AppFullScreenImageComponent } from '../components/full-screen-image/full-screen-image.component';
 import { DocsRepositoryService } from '../repository/docs.repository';
-import { DocsDataAccessService } from '../services/docs.data-access.service';
 import { docToText } from '../utils';
 import {
   addDocTag,
@@ -53,10 +52,8 @@ import { selectDoc } from './selectors';
 export class DocsEffects {
   constructor(
     private readonly actions$: Actions,
-    private readonly docsDataAccess: DocsDataAccessService,
     private readonly modalController: ModalController,
     private readonly docRepository: DocsRepositoryService,
-    private readonly router: Router,
     private readonly toastController: ToastController,
     private readonly store: Store,
     private readonly actionSheetController: ActionSheetController
