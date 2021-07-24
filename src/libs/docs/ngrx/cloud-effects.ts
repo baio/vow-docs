@@ -8,7 +8,6 @@ import { AlertController } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, forkJoin, of } from 'rxjs';
-import { dispatch } from 'rxjs/internal/observable/pairs';
 import {
   catchError,
   debounceTime,
@@ -332,6 +331,7 @@ export class CloudEffects {
       ),
       filter(({ doc }) => !!doc.stored),
       switchMap(({ doc, socialAuthState }) => {
+        console.log('???', doc);
         const cloudText = formatCloudText(doc);
         return this.yaDisk
           .uploadText(socialAuthState.token, cloudText, `${doc.id}.txt`)
@@ -353,7 +353,12 @@ export class CloudEffects {
         switchMap(([{ doc, base64, id }, token]) =>
           this.store.select(selectDoc(doc.id)).pipe(
             take(1),
-            map(() => ({ doc, token, base64, attachmentId: id }))
+            map((selectedDoc) => ({
+              doc: selectedDoc,
+              token,
+              base64,
+              attachmentId: id,
+            }))
           )
         ),
         switchMap(({ doc, base64, token, attachmentId }) => {
@@ -382,7 +387,7 @@ export class CloudEffects {
         switchMap(([{ doc, attachmentIndex }, token]) =>
           this.store.select(selectDoc(doc.id)).pipe(
             take(1),
-            map(() => ({ doc, token, attachmentIndex }))
+            map((selectedDoc) => ({ doc: selectedDoc, token, attachmentIndex }))
           )
         ),
         switchMap(({ doc, token, attachmentIndex }) => {
