@@ -18,7 +18,7 @@ export class DbService {
     await this.sqLite.sqlite.setEncryptionSecret(secretKey);
     this.db = await this.sqLite.createConnection(dbName, true, 'secret', 1);
 
-    await this.db.delete();
+    //await this.db.delete();
 
     await this.db.open();
 

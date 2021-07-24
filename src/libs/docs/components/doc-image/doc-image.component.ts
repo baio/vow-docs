@@ -1,19 +1,23 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
-export interface DocImageView {
-  src: string;
-  kind: 'main' | 'attachment';
+export interface AppDocImageView {
+  images: string[];
+  activeSlideIndex: number;
+  showCameraButton: boolean;
+  linkButtonMode: 'link' | 'unlink';
 }
 
 @Component({
@@ -22,13 +26,25 @@ export interface DocImageView {
   styleUrls: ['doc-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppDocImageComponent implements OnChanges {
-  showCameraButton = true;
-  linkButtonMode: 'link' | 'unlink' = 'link';
-  images: DocImageView[] = [];
+export class AppDocImageComponent implements OnDestroy, AfterViewInit {
+  private readonly activeSlideIndex$ = new BehaviorSubject(0);
+  private readonly imgBase64$ = new BehaviorSubject(null);
+  private readonly attachmentsBase64$ = new BehaviorSubject<string[]>([]);
+  swiper: any;
+  readonly view$: Observable<AppDocImageView>;
 
-  @Input() imgBase64: string;
-  @Input() attachmentsBase64: string[];
+  @Input() set imgBase64(val: string) {
+    this.imgBase64$.next(val);
+  }
+  get imgBase64() {
+    return this.imgBase64$.getValue();
+  }
+  @Input() set attachmentsBase64(val: string[]) {
+    this.attachmentsBase64$.next(val || []);
+  }
+  get attachmentsBase64() {
+    return this.attachmentsBase64$.getValue();
+  }
 
   @Output() cameraClick = new EventEmitter();
   @Output() linkClick = new EventEmitter();
@@ -42,50 +58,42 @@ export class AppDocImageComponent implements OnChanges {
     loop: false,
   };
 
-  constructor(private readonly cdr: ChangeDetectorRef) {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.imgBase64) {
-      /*
-      const images = [
-        ...(changes.imageBase64.currentValue
-          ? [changes.imageBase64.currentValue]
-          : []),
-        ,
-        ...(this.attachmentsBase64 || []),
-      ] as string[];
-      this.images = images.map((src, i) => ({
-        src,
-        kind: i === 0 ? 'main' : 'attachment',
-      }));
-      */
-      const imgView = {
-        src: changes.imgBase64.currentValue,
-        kind: 'main' as 'main',
-      };
-      this.images.splice(0, 0, imgView);
-      console.log('change 1');
-    }
-    if (changes.attachmentsBase64) {
-      console.log('change 2');
-      const imgViews = (changes.attachmentsBase64.currentValue || []).map(
-        (m) => ({ src: m, kind: 'attachment' as 'attachment' })
-      );
-      this.images.splice(1, this.images.length - 1, ...imgViews);
-      console.log('!!!', this.images);
-    }
+  constructor() {
+    this.view$ = combineLatest([
+      this.activeSlideIndex$,
+      this.imgBase64$,
+      this.attachmentsBase64$,
+    ]).pipe(
+      map(
+        ([activeSlideIndex, imgBase64, attachmentsBase64]) =>
+          ({
+            images: [imgBase64, ...attachmentsBase64],
+            activeSlideIndex,
+            showCameraButton: activeSlideIndex === 0,
+            linkButtonMode: activeSlideIndex === 0 ? 'link' : 'unlink',
+          } as AppDocImageView)
+      ),
+      tap(console.log)
+    );
   }
 
-  trackByImage(_, img: DocImageView) {
-    return img.src;
+  async ngAfterViewInit() {
+    this.swiper = await this.ionSlides.getSwiper();
+    console.log('???', this.swiper);
+  }
+
+  async ngOnDestroy() {
+    this.swiper.destroy(true, true);
+    console.log(this.swiper);
+  }
+
+  trackByImage(_, img: string) {
+    return img;
   }
 
   async onSlideChanged() {
     const activeIndex = await this.ionSlides.getActiveIndex();
-    const activeImageView = this.images[activeIndex];
-    this.showCameraButton = activeImageView.kind === 'main';
-    this.linkButtonMode = activeImageView.kind === 'main' ? 'link' : 'unlink';
-    this.cdr.markForCheck();
+    this.activeSlideIndex$.next(activeIndex);
   }
 
   onCameraClicked($event: MouseEvent) {
@@ -94,15 +102,15 @@ export class AppDocImageComponent implements OnChanges {
     this.cameraClick.emit();
   }
 
-  async onLinkClicked($event: MouseEvent) {
+  async onLinkClicked($event: MouseEvent, activeIndex: number) {
     $event.preventDefault();
     $event.stopPropagation();
-    const activeIndex = await this.ionSlides.getActiveIndex();
-    console.log('wtf ?', activeIndex);
     if (activeIndex === 0) {
       this.linkClick.emit();
     } else {
       this.unlinkClick.emit(activeIndex - 1);
     }
+    // there is could be potential slide change!
+    setTimeout(() => this.onSlideChanged(), 0);
   }
 }
