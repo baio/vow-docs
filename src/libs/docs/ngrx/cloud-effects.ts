@@ -463,18 +463,20 @@ export class CloudEffects {
       withLatestFrom(this.store.select(selectDocs)),
       // eslint-disable-next-line arrow-body-style
       switchMap(([{ diskFilesResult, provider, token }, docs]) => {
-        const diskFiles = diskFilesResult.map((f) => ({
-          // id not uniq here !!!
-          id: f.name.replace(/^attachment-|\.json$|\.jpeg$/g, ''),
-          name: f.name,
-          file: f.url,
-          type: /^attachment-/.test(f.name)
-            ? 'attachment'
-            : /\.json$/.test(f.name)
-            ? 'data'
-            : 'image',
-          viewUrl: f.viewUrl,
-        }));
+        const diskFiles = diskFilesResult
+          .map((f) => ({
+            // id not uniq here !!!
+            id: f.name.replace(/^attachment-|\.json$|\.jpeg$/g, ''),
+            name: f.name,
+            file: f.url,
+            type: /^attachment-/.test(f.name)
+              ? 'attachment'
+              : /\.json$/.test(f.name)
+              ? 'data'
+              : 'image',
+            viewUrl: f.viewUrl,
+          }))
+          .filter((f) => f.name !== 'tags.json');
 
         const docIds = Object.keys(docs);
         const newDiskFiles = diskFiles.filter(
@@ -492,8 +494,8 @@ export class CloudEffects {
           }
           console.log('333', f.file, imgFile.file);
           return forkJoin([
-            this.yaDisk.readFile(f.file),
-            this.yaDisk.readFileAsImageBase64(imgFile.file),
+            this.yaDisk.readFileRawUrl(f.file),
+            this.yaDisk.readFileRawUrlAsImageBase64(imgFile.file),
           ]).pipe(
             map(([dataFile, imageFile]) =>
               parseCloudText(
@@ -518,7 +520,7 @@ export class CloudEffects {
                     attachments.map((m) =>
                       m
                         ? this.yaDisk
-                            .readFileAsImageBase64(m.file)
+                            .readFileRawUrlAsImageBase64(m.file)
                             .pipe(map((r) => ({ ...r, id: m.id })))
                             .pipe(catchError(() => of(null)))
                         : of(null)

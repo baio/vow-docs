@@ -145,15 +145,30 @@ export class YaDiskService {
     );
   }
 
-  readFileAsImageBase64(
+  readFileRawUrlAsImageBase64(
     url: string
   ): Observable<{ data: string; type: string }> {
-    return this.readFile(url).pipe(
+    return this.readFileRawUrl(url).pipe(
       map((m) => ({ data: `data:${m.type};base64,${m.data}`, type: m.type }))
     );
   }
 
-  readFile(url: string): Observable<{ data: string; type: string }> {
+  readFile(
+    token: string,
+    fileName: string
+  ): Observable<{ data: string; type: string }> {
+    // TODO
+    return this.http
+      .get<{ href: string }>(
+        this.getUrl(
+          `resources/download?path=${VOW_DOCS_FOLDER_NAME}/${fileName} `
+        ),
+        { headers: this.getHeaders(token) }
+      )
+      .pipe(switchMap(({ href }) => this.readFileRawUrl(href)));
+  }
+
+  readFileRawUrl(url: string): Observable<{ data: string; type: string }> {
     // TODO
     const encodedUrl = encodeURIComponent(url);
     return this.http.get<any>(
