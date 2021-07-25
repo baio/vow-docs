@@ -1,18 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { appDownloadDocsFromCloud } from '@app/shared';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ProfileConfig, SocialAuthProvider } from '../models';
+import { ProfileConfig } from '../models';
 import {
   profileSocialLogin,
   profileSocialLogout,
   setProfileConfig,
 } from '../ngrx/actions';
-import {
-  selectProfileConfig,
-  selectProfileState,
-  selectSocialAuthState,
-} from '../ngrx/selectors';
+import { selectProfileState } from '../ngrx/selectors';
 import { SocialAuthProviderWithOffline } from '../profile-social-providers/profile-social-providers.component';
 
 export interface ProfileWorkspaceView {
@@ -53,5 +50,9 @@ export class AppProfileWorkspaceComponent {
 
   onConfigChange(config: ProfileConfig) {
     this.store.dispatch(setProfileConfig({ config }));
+  }
+
+  onDownloadFromCloud() {
+    this.store.dispatch(appDownloadDocsFromCloud());
   }
 }

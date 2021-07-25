@@ -4,26 +4,35 @@ import {
   selectProfileState,
   selectSocialAuthState,
 } from '@app/profile';
+import { appDownloadDocsFromCloud } from '@app/shared';
 import { AlertController } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { EMPTY, forkJoin, of } from 'rxjs';
+import { fromPairs } from 'lodash';
+import { EMPTY, forkJoin, from, interval, merge, of } from 'rxjs';
 import {
   catchError,
+  concatMap,
   debounceTime,
   filter,
+  flatMap,
   map,
+  mergeAll,
+  mergeMap,
   switchMap,
   take,
+  tap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { YaDiskService } from 'src/libs/ya-disk';
+import { Doc, DocAttachment } from '../models';
 import { DocsRepositoryService } from '../repository/docs.repository';
 import {
   addCloudDocConfirmed,
   addDocAttachment,
   addDocTag,
   addDocument,
+  cloudDocImported,
   deleteDocConfirmed,
   removeCloudDoc,
   removeCloudDocConfirmed,
@@ -40,8 +49,8 @@ import {
   uploadCloudDocError,
   uploadCloudDocSuccess,
 } from './actions';
-import { selectDoc } from './selectors';
-import { formatCloudText } from './utils/cloud-text';
+import { selectDoc, selectDocs } from './selectors';
+import { formatCloudText, parseCloudText } from './utils/cloud-text';
 
 @Injectable()
 export class CloudEffects {
@@ -344,7 +353,6 @@ export class CloudEffects {
       ),
       filter(({ doc }) => !!doc.stored),
       switchMap(({ doc, socialAuthState }) => {
-        console.log('???', doc);
         const cloudText = formatCloudText(doc);
         return this.yaDisk
           .uploadText(socialAuthState.token, cloudText, `${doc.id}.txt`)
@@ -416,5 +424,102 @@ export class CloudEffects {
         })
       ),
     { dispatch: false }
+  );
+
+  downloadDocsFromCloud$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(appDownloadDocsFromCloud),
+      withLatestFrom(this.store.select(selectSocialAuthState)),
+      filter(([_, socialAuthState]) => !!socialAuthState),
+      switchMap(([_, { token, provider }]) =>
+        this.yaDisk
+          .readAllFiles(token)
+          .pipe(
+            map((diskFilesResult) => ({ diskFilesResult, provider, token }))
+          )
+      ),
+      withLatestFrom(this.store.select(selectDocs)),
+      // eslint-disable-next-line arrow-body-style
+      switchMap(([{ diskFilesResult, provider, token }, docs]) => {
+        const diskFiles = diskFilesResult.map((f) => ({
+          // id not uniq here !!!
+          id: f.name.replace(/^attachment-|\.txt$|\.jpeg$/g, ''),
+          name: f.name,
+          file: f.url,
+          type: /^attachment-/.test(f.name)
+            ? 'attachment'
+            : /\.txt$/.test(f.name)
+            ? 'data'
+            : 'image',
+          viewUrl: f.viewUrl,
+        }));
+
+        const docIds = Object.keys(docs);
+        const newDiskFiles = diskFiles.filter(
+          (f) => f.type === 'data' && !docIds.includes(f.id)
+        );
+        console.log('111', newDiskFiles);
+        const diskFilesHash = fromPairs(diskFiles.map((m) => [m.name, m]));
+        console.log('222', diskFilesHash);
+        return newDiskFiles.map((f) => {
+          const imgFile = diskFilesHash[f.id + '.jpeg'];
+
+          if (!imgFile) {
+            // data here but image not, ignore
+            return of(null);
+          }
+          console.log('333', f.file, imgFile.file);
+          return forkJoin([
+            this.yaDisk.readFile(f.file),
+            this.yaDisk.readFileAsImageBase64(imgFile.file),
+          ]).pipe(
+            map(([dataFile, imageFile]) =>
+              parseCloudText(
+                f.id,
+                provider,
+                dataFile.data,
+                imageFile.data,
+                imgFile.viewUrl
+              )
+            ),
+            filter((doc: Doc) => !!doc),
+            switchMap((doc) => {
+              const attachments = (doc.attachments || []).map(
+                (m) => diskFilesHash[`attachment-${m}.jpeg`]
+              );
+              return forkJoin(
+                attachments.map((m) =>
+                  m
+                    ? this.yaDisk
+                        .readFileAsImageBase64(m.file)
+                        .pipe(map((r) => ({ ...r, id: m.id })))
+                        .pipe(catchError(() => of(null)))
+                    : of(null)
+                )
+              ).pipe(
+                map((attachmentsResult: { id: string; data: string }[]) => {
+                  const existentAttachments = attachmentsResult.filter(
+                    (r) => !!r
+                  );
+                  const docAttachments = existentAttachments.map(
+                    (m) => ({ id: m.id, imgBase64: m.data } as DocAttachment)
+                  );
+                  return {
+                    doc: {
+                      ...doc,
+                      attachments: existentAttachments.map((m) => m.id),
+                    },
+                    docAttachments,
+                  };
+                })
+              );
+            })
+          );
+        });
+      }),
+      mergeMap((m) => m),
+      tap(console.log),
+      map((m) => cloudDocImported(m))
+    )
   );
 }

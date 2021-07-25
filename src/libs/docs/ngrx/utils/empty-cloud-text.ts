@@ -1,6 +1,6 @@
 import { DocUnknown } from '../../models';
 import { DocMeta } from './doc-meta';
-import { flatStr, flatTags, unFlatStr, unFlatTags } from './str-utils';
+import { flatStr, flatTags, parseLines, unFlatStr, unFlatTags } from './str-utils';
 
 export const formatEmptyCloudText = (meta: DocMeta) => {
   const VERSION = 1;
@@ -21,8 +21,8 @@ export const formatEmptyCloudText = (meta: DocMeta) => {
   return text;
 };
 
-export const emptyCloudText = (text: string) => {
-  const lines = text.split('\n');
+export const parseEmptyCloudText = (text: string) => {
+  const lines = parseLines(text);
   if (lines[3] === 'ПУСТОЙ') {
     const docMeta = {
       tags: unFlatTags(lines[5]),

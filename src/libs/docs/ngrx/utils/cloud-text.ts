@@ -1,8 +1,15 @@
-import { Doc } from '../../models';
+import { SocialAuthProvider } from 'src/libs/profile/models';
+import { Doc, DocFormatted } from '../../models';
 import { DocMeta } from './doc-meta';
-import { formatEmptyCloudText } from './empty-cloud-text';
-import { formatPassportRFCloudText } from './passport-rf-cloud-text';
-import { formatUnknownCloudText } from './unknown-cloud-text';
+import { formatEmptyCloudText, parseEmptyCloudText } from './empty-cloud-text';
+import {
+  formatPassportRFCloudText,
+  parsePassportRFCloudText,
+} from './passport-rf-cloud-text';
+import {
+  formatUnknownCloudText,
+  parseUnknownCloudText,
+} from './unknown-cloud-text';
 
 export const formatCloudText = (doc: Doc) => {
   const meta = {
@@ -22,5 +29,43 @@ export const formatCloudText = (doc: Doc) => {
     }
   } else {
     return formatEmptyCloudText(meta);
+  }
+};
+
+export const parseCloudText = (
+  id: string,
+  provider: SocialAuthProvider,
+  text: string,
+  imgBase64: string,
+  viewUrl: string
+): Doc => {
+  let data: { docFormatted: DocFormatted; docMeta: DocMeta } =
+    parsePassportRFCloudText(text);
+  if (!data) {
+    data = parseUnknownCloudText(text);
+  }
+  if (!data) {
+    data = parseEmptyCloudText(text);
+  }
+  if (!data) {
+    return null;
+  } else {
+    return {
+      id,
+      imgBase64,
+      date: data.docMeta.date,
+      tags: data.docMeta.tags,
+      comment: data.docMeta.comment,
+      attachments: data.docMeta.attachments,
+      stored: {
+        provider,
+        url: viewUrl,
+        status: 'success',
+        date: data.docMeta.date,
+      },
+      parsed: null,
+      labeled: { label: data.docFormatted.kind },
+      formatted: data.docFormatted,
+    };
   }
 };

@@ -147,3 +147,8 @@ export const removeDocAttachment = createAction(
   '[Docs] Remove Doc Attachment',
   props<{ doc: Doc; attachmentIndex: number }>()
 );
+
+export const cloudDocImported = createAction(
+  '[Docs] Cloud Doc Imported',
+  props<{ doc: Doc; docAttachments: DocAttachment[] }>()
+);

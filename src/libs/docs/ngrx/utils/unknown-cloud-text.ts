@@ -1,6 +1,12 @@
 import { DocUnknown } from '../../models';
 import { DocMeta } from './doc-meta';
-import { flatStr, flatTags, unFlatStr, unFlatTags } from './str-utils';
+import {
+  flatStr,
+  flatTags,
+  parseLines,
+  unFlatStr,
+  unFlatTags,
+} from './str-utils';
 
 export const formatUnknownCloudText = (
   docFormatted: DocUnknown,
@@ -27,7 +33,7 @@ export const formatUnknownCloudText = (
 };
 
 export const parseUnknownCloudText = (text: string) => {
-  const lines = text.split('\n');
+  const lines = parseLines(text);
   if (lines[3] === 'НЕИЗВЕСТНЫЙ') {
     const docFormatted = {
       kind: 'unknown',
@@ -35,10 +41,10 @@ export const parseUnknownCloudText = (text: string) => {
     } as DocUnknown;
 
     const docMeta = {
-      tags: unFlatTags(lines[8]),
-      comment: unFlatStr(lines[10]),
-      date: lines[12] ? +lines[12] : null,
-      attachments: unFlatTags(lines[14]),
+      tags: unFlatTags(lines[7]),
+      comment: unFlatStr(lines[9]),
+      date: lines[11] ? +lines[11] : null,
+      attachments: unFlatTags(lines[13]),
     } as DocMeta;
     return {
       docFormatted,

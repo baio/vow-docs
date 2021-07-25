@@ -19,6 +19,7 @@ import {
   addDocAttachment,
   removeDocAttachment,
   addCloudDocConfirmed,
+  cloudDocImported,
 } from './actions';
 
 export const initialState: DocsState = {
@@ -159,6 +160,16 @@ export const docsReducer = createReducer(
     state = assocPath(
       ['attachments'],
       omit(attachmentId, state.attachments),
+      state
+    );
+    return state;
+  }),
+  on(cloudDocImported, (state, { doc, docAttachments }) => {
+    state = assocPath(['docs', doc.id], doc, state);
+    const newAttachments = fromPairs(docAttachments.map((m) => [m.id, m]));
+    state = assocPath(
+      ['attachments'],
+      { ...state.attachments, ...newAttachments },
       state
     );
     return state;

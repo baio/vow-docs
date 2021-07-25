@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, throwError } from 'rxjs';
+import { forkJoin, Observable, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { base64Str2Blob } from './base64str-to-blob';
 import { text2Blob } from './text-to-blob';
@@ -124,5 +124,97 @@ export class YaDiskService {
       this.removeFile(data.token, data.imgFileName),
       this.removeFile(data.token, data.textFileName),
     ]);
+  }
+
+  readAllFiles(
+    token: string
+  ): Observable<{ url: string; name: string; viewUrl: string }[]> {
+    const url = this.getUrl(
+      `resources?path=${VOW_DOCS_FOLDER_NAME}&limit=1000`
+    );
+    const headers = this.getHeaders(token);
+    return this.http.get<any>(url, { headers }).pipe(
+      map((result) =>
+        result._embedded.items.map((m) => ({
+          url: m.file,
+          name: m.name,
+          // eslint-disable-next-line max-len
+          viewUrl: `https://disk.yandex.com/client/disk/${VOW_DOCS_FOLDER_NAME}?idApp=client&dialog=slider&idDialog=%2Fdisk%2F${VOW_DOCS_FOLDER_NAME}%2F${m.name}`,
+        }))
+      )
+    );
+  }
+
+  readFileAsImageBase64(
+    url: string
+  ): Observable<{ data: string; type: string }> {
+    return this.readFile(url).pipe(
+      map((m) => ({ data: `data:${m.type};base64,${m.data}`, type: m.type }))
+    );
+  }
+
+  readFile(url: string): Observable<{ data: string; type: string }> {
+    // TODO
+    const encodedUrl = encodeURIComponent(url);
+    return this.http.get<any>(
+      `https://functions.yandexcloud.net/d4e8j27s7u3veqcvh8p2?url=${encodedUrl}`
+    );
+    /*
+    //const headers = this.getHeaders(token);
+    return this.http
+      .get<{ href: string }>(
+        this.getUrl(
+          'resources/download?path=VOW-DOCS/4572b055-b941-4b85-8e9a-a6ec92a743fb.jpeg'
+        ),
+        { headers: this.getHeaders(token) }
+      )
+      .pipe(
+        switchMap(async ({ href }) => {
+          /*
+          const options = {
+            url: href,
+            name: '4572b055-b941-4b85-8e9a-a6ec92a743fb',
+            filePath: '4572b055-b941-4b85-8e9a-a6ec92a743fb.jpeg',
+            fileDirectory: Directory.Data,
+            method: 'GET',
+          };
+
+          const response = await Http.downloadFile(options);
+          console.log(response);
+          return null;
+
+          const headers = new Headers({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            Accept: 'application/octet-stream',
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            Host: 'webdav.yandex.ru',
+          });
+          /*
+          fetch({
+            url: href,
+            method: 'GET',
+            headers
+          });
+
+          const res = await fetch(href, { mode: 'no-cors' });
+
+          console.log('???', res);
+
+          return null;
+          /*
+          const headers = new HttpHeaders()
+            .append('Accept', 'application/octet-stream');
+            //.append('Host', 'webdav.yandex.ru');
+
+          const req = new HttpRequest('GET', href, {
+            responseType: 'blob',
+            reportProgress: true,
+            headers,
+          });
+
+          return this.http.request(req).pipe(map((m) => ({ href: '' })));
+          
+        })
+        */
   }
 }

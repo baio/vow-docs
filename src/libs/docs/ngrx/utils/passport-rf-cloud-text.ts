@@ -1,7 +1,15 @@
 import { format, parse } from 'date-fns';
 import { DocPassportRF } from '../../models';
 import { DocMeta } from './doc-meta';
-import { flatStr, flatTags, unFlatStr, unFlatTags } from './str-utils';
+import {
+  flatStr,
+  flatTags,
+  formatDate,
+  parseDate,
+  parseLines,
+  unFlatStr,
+  unFlatTags,
+} from './str-utils';
 
 export const formatPassportRFCloudText = (
   docFormatted: DocPassportRF,
@@ -24,11 +32,7 @@ export const formatPassportRFCloudText = (
   ПАСПОРТ ВЫДАН
   ${docFormatted.issuer || ''}
   ДАТА ВЫДАЧИ
-  ${
-    docFormatted.issueDate
-      ? format(new Date(docFormatted.issueDate), 'dd.MM.yyyy')
-      : ''
-  }
+  ${formatDate(docFormatted.issueDate)}
   КОД ПОДРАЗДЕЛЕНИЯ
   ${docFormatted.departmentCode || ''}
   ПОЛ
@@ -40,11 +44,7 @@ export const formatPassportRFCloudText = (
       : ''
   }
   ДАТА РОЖДЕНИЯ
-  ${
-    docFormatted.dateOfBirth
-      ? format(new Date(docFormatted.dateOfBirth), 'dd.MM.yyyy')
-      : ''
-  }
+  ${formatDate(docFormatted.dateOfBirth)}
   МЕСТО РОЖДЕНИЯ
   ${docFormatted.placeOfBirth || ''}
   ТАГИ
@@ -60,7 +60,7 @@ export const formatPassportRFCloudText = (
 };
 
 export const parsePassportRFCloudText = (text: string) => {
-  const lines = text.split('\n');
+  const lines = parseLines(text);
   if (lines[3] === 'ПАССПОРТ РФ') {
     const docFormatted = {
       kind: 'passport-rf',
@@ -69,11 +69,9 @@ export const parsePassportRFCloudText = (text: string) => {
       middleName: lines[9] || null,
       identifier: lines[11] || null,
       issuer: unFlatStr(lines[13]),
-      issueDate: lines[15]
-        ? parse(lines[15], 'dd.MM.yyyy', null).toISOString()
-        : null,
+      issueDate: parseDate(lines[15]),
       sex: lines[17] ? (lines[17] === 'мужской' ? 'male' : 'feamle') : null,
-      dateOfBirth: lines[19],
+      dateOfBirth: parseDate(lines[19]),
       placeOfBirth: lines[21]
         ? parse(lines[21], 'dd.MM.yyyy', null).toISOString()
         : null,
