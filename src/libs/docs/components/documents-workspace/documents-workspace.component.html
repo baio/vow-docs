@@ -1,5 +1,10 @@
 <ion-content>
-  <ion-searchbar placeholder="найти" (ionChange)="onSearchChange($event)"></ion-searchbar>
+
+  <ion-toolbar slot="fixed">
+    <ion-searchbar placeholder="найти" (ionChange)="onSearchChange($event)"></ion-searchbar>
+  </ion-toolbar>
+
+
   <ion-grid *ngIf="view$ | async as view">
     <ion-row *ngFor="let row of view.rows; trackBy: trackByRow" class="list-row">
       <ion-col size="6">
@@ -18,10 +23,10 @@
       <ion-icon name="camera-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  <!--<input type="file" id="file" style="display: none" #fileInput />-->
 
   <ng-template #col let-doc>
     <app-doc-list-image [imgBase64]="doc.imgBase64" [title]="getTitle(doc)" (click)="onDocClick(doc)">
     </app-doc-list-image>
   </ng-template>
+
 </ion-content>
