@@ -19,7 +19,7 @@ export const docFormRFPassportForeign: DocForm = {
     },
     {
       kind: 'text',
-      name: 'firstNameEm',
+      name: 'firstNameEn',
       label: 'Given Name',
     },
     {
@@ -69,18 +69,23 @@ export const docFormRFPassportForeign: DocForm = {
     },
     {
       kind: 'text',
-      name: 'regionOfBirth',
+      name: 'placeOfBirth',
       label: 'Место рождения',
     },
     {
       kind: 'text',
-      name: 'regionOfBirthEn',
+      name: 'placeOfBirthEn',
       label: 'Place of Birth',
     },
     {
       kind: 'text',
       name: 'issuer',
       label: 'Орган, выдавший документ / Authority',
+    },
+    {
+      kind: 'text',
+      name: 'type',
+      label: 'Тип / Type',
     },
   ],
 };

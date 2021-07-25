@@ -23,17 +23,18 @@ export const passportForeignRF = (doc: DocPassportForeignRF): DocView => ({
           : null,
     },
     {
-      label: 'Дата рождения / Date of birth',
-      value: doc.dateOfBirth && format(new Date(doc.dateOfBirth), 'dd.MM.yyyy'),
+      label: 'Место рождения / Place of Birth',
+      value: `${doc.placeOfBirth || ''}/${doc.placeOfBirthEn || ''}`,
     },
     {
-      col1: {
+      col2: {
         label: 'Пол / Sex',
         value: doc.sex ? (doc.sex === 'male' ? 'M/M' : 'Ж/F') : null,
       },
-      col2: {
-        label: 'Место рождения / Place of Bith',
-        value: `${doc.placeOfBirth || ''}/${doc.placeOfBirthEn || ''}`,
+      col1: {
+        label: 'Дата рождения / Date of birth',
+        value:
+          doc.dateOfBirth && format(new Date(doc.dateOfBirth), 'dd.MM.yyyy'),
       },
     },
     {
@@ -49,6 +50,10 @@ export const passportForeignRF = (doc: DocPassportForeignRF): DocView => ({
     {
       label: 'Орган Выдавший Документ / Authority',
       value: doc.issuer,
+    },
+    {
+      label: 'Тип / Type',
+      value: doc.type,
     },
   ],
 });
