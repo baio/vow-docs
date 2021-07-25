@@ -3,7 +3,7 @@ import { assocPath, fromPairs, omit } from 'lodash/fp';
 import { TagsState } from '../models';
 import {
   createTag,
-  mergeTags,
+  importTagsFromCloudSuccess,
   rehydrateTagsSuccess,
   removeTag,
 } from './actions';
@@ -24,7 +24,7 @@ export const tagsReducer = createReducer(
     const hash = fromPairs(tags.map((m) => [m.name, m]));
     return assocPath(['tags'], hash, state);
   }),
-  on(mergeTags, (state, { tags }) => {
+  on(importTagsFromCloudSuccess, (state, { tags }) => {
     const tagsHash = fromPairs(tags.map((m) => [m.name, m]));
     return assocPath(['tags'], { ...state.tags, ...tagsHash }, state);
   })

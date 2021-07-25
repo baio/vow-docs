@@ -8,7 +8,7 @@ import { switchMap, map, withLatestFrom, filter, tap } from 'rxjs/operators';
 import { TagsRepositoryService } from '../repository/tags.repository';
 import {
   createTag,
-  mergeTags,
+  importTagsFromCloudSuccess,
   rehydrateTags,
   rehydrateTagsSuccess,
   removeTag,
@@ -87,20 +87,30 @@ export class TagsEffects {
       map(([_, socialAuthState]) => socialAuthState),
       filter((f) => !!f),
       switchMap((socialAuthState) =>
-        this.yaDisk
-          .readFile(socialAuthState.token, 'tags.json')
-          .pipe(
-            map((m) =>
-              m.data
-                ? JSON.parse(m.data).map((name: string) => ({
-                    name,
-                    date: new Date().getTime(),
-                  }))
-                : []
-            )
+        this.yaDisk.readFile(socialAuthState.token, 'tags.json').pipe(
+          map((m) =>
+            m.data
+              ? JSON.parse(m.data).map((name: string) => ({
+                  name,
+                  date: new Date().getTime(),
+                }))
+              : []
           )
+        )
       ),
-      map((tags) => mergeTags({ tags }))
+      map((tags) => importTagsFromCloudSuccess({ tags }))
     )
+  );
+
+  importTagsFromCloudSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(importTagsFromCloudSuccess),
+        withLatestFrom(this.store.select(selectTags)),
+        tap(([, tags]) => {
+          this.tagsRepository.setTags(Object.values(tags));
+        })
+      ),
+    { dispatch: false }
   );
 }

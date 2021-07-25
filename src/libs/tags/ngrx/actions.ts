@@ -18,7 +18,7 @@ export const removeTag = createAction(
   props<{ name: string }>()
 );
 
-export const mergeTags = createAction(
-  '[Tags] Merge Tags',
+export const importTagsFromCloudSuccess = createAction(
+  '[Tags] Import Tags From Cloud Success',
   props<{ tags: Tag[] }>()
 );
