@@ -10,7 +10,7 @@ export class CameraService {
     try {
       const image = await Camera.getPhoto({
         quality: 90,
-        // allowEditing: true,
+        allowEditing: false,
         resultType: CameraResultType.Base64,
         saveToGallery: false,
         preserveAspectRatio: true,
