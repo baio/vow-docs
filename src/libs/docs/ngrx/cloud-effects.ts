@@ -9,15 +9,12 @@ import { AlertController } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fromPairs } from 'lodash';
-import { EMPTY, forkJoin, from, interval, merge, of } from 'rxjs';
+import { EMPTY, forkJoin, of } from 'rxjs';
 import {
   catchError,
-  concatMap,
   debounceTime,
   filter,
-  flatMap,
   map,
-  mergeAll,
   mergeMap,
   switchMap,
   take,
@@ -405,13 +402,7 @@ export class CloudEffects {
         ofType(removeDocAttachment),
         withLatestFrom(this.token$),
         filter(([{ doc }, token]) => !!token && !!doc.stored),
-        switchMap(([{ doc, attachmentIndex }, token]) =>
-          this.store.select(selectDoc(doc.id)).pipe(
-            take(1),
-            map((selectedDoc) => ({ doc: selectedDoc, token, attachmentIndex }))
-          )
-        ),
-        switchMap(({ doc, token, attachmentIndex }) => {
+        switchMap(([{ doc, attachmentIndex }, token]) => {
           const cloudText = formatCloudText(doc);
           const attachmentId = doc.attachments[attachmentIndex];
           if (!cloudText) {

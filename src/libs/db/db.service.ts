@@ -19,7 +19,6 @@ export class DbService {
     this.db = await this.sqLite.createConnection(dbName, true, 'secret', 1);
 
     //await this.db.delete();
-
     await this.db.open();
 
     // create tables in db
