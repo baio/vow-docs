@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { App } from '@capacitor/app';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
-import { App } from '@capacitor/app';
 
 export interface AppAuthenticateView {
   pinError: boolean;
@@ -69,13 +69,13 @@ export class AppAuthenticateComponent {
     if (result) {
       // authenticated !!!
       this.authService.setAuthenticated();
-      this.router.navigateByUrl('/');
+      this.router.navigateByUrl('/', { replaceUrl: true });
     }
   }
 
   async onPinSet(pin: string) {
     this.authService.setPin(pin, true);
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl('/', { replaceUrl: true });
   }
 
   async onPinEntered(pin: string) {
