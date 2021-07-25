@@ -39,6 +39,7 @@ import {
   removeDocTag,
   setDocComment,
   setDocCommentDebounced,
+  updateCloudDocImageConfirmed,
   updateDocFormatted,
   updateDocImage,
   uploadCloudDoc,
@@ -87,9 +88,9 @@ export class CloudEffects {
     )
   );
 
-  addCloudDocConfirmed$ = createEffect(() =>
+  uploadCloudDocImageConfirmed$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(addCloudDocConfirmed),
+      ofType(addCloudDocConfirmed, updateCloudDocImageConfirmed),
       switchMap(({ doc, socialAuthState }) =>
         this.yaDisk
           .uploadImage(socialAuthState.token, doc.imgBase64, `${doc.id}.jpeg`)
@@ -103,6 +104,23 @@ export class CloudEffects {
             ),
             catchError((error) => of(uploadCloudDocError({ error, doc })))
           )
+      )
+    )
+  );
+
+  updateDocImageInCloud$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateDocImage),
+      withLatestFrom(this.store.select(selectProfileState)),
+      filter(
+        ([{ doc }, profileState]) =>
+          !!profileState.socialAuthState && !!doc.stored
+      ),
+      map(([{ doc }, profileState]) =>
+        updateCloudDocImageConfirmed({
+          doc: { ...doc, imgBase64: doc.imgBase64 },
+          socialAuthState: profileState.socialAuthState,
+        })
       )
     )
   );

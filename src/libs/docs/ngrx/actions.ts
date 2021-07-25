@@ -93,6 +93,11 @@ export const addCloudDocConfirmed = createAction(
   props<{ doc: Doc; socialAuthState: SocialAuthState; date: number }>()
 );
 
+export const updateCloudDocImageConfirmed = createAction(
+  '[Docs] Update Cloud Doc Image Confirmed',
+  props<{ doc: Doc; socialAuthState: SocialAuthState }>()
+);
+
 export const uploadCloudDocConfirmed = createAction(
   '[Docs] Upload Cloud Doc Confirmed',
   props<{ doc: Doc; date: number }>()
