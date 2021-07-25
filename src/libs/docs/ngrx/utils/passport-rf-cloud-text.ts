@@ -20,7 +20,7 @@ export const formatPassportRFCloudText = (
   ВЕРСИЯ
   ${VERSION}
   ТИП ДОКУМЕНТА
-  ПАССПОРТ РФ
+  ПАСПОРТ РФ
   ФАМИЛИЯ
   ${docFormatted.lastName || ''}
   ИМЯ
@@ -61,7 +61,7 @@ export const formatPassportRFCloudText = (
 
 export const parsePassportRFCloudText = (text: string) => {
   const lines = parseLines(text);
-  if (lines[3] === 'ПАССПОРТ РФ') {
+  if (lines[3] === 'ПАСПОРТ РФ') {
     const docFormatted = {
       kind: 'passport-rf',
       lastName: lines[5] || null,

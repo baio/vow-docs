@@ -38,7 +38,7 @@ export class AppDocEditWorkspaceComponent implements OnInit {
     },
     {
       key: 'passport-rf',
-      label: 'Гражданский Пасспорт РФ',
+      label: 'Паспорт РФ',
     },
   ];
 

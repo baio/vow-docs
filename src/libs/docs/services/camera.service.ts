@@ -15,6 +15,10 @@ export class CameraService {
         saveToGallery: false,
         preserveAspectRatio: true,
         width: 1500,
+        promptLabelHeader: 'Фото',
+        promptLabelCancel: 'Отмена',
+        promptLabelPhoto: 'Из Фото Галереи',
+        promptLabelPicture: 'Сделать фото',
       });
 
       // image.webPath will contain a path that can be set as an image src.

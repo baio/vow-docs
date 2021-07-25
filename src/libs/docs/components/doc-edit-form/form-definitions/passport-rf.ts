@@ -25,7 +25,7 @@ export const docFormRFPassport: DocForm = {
     {
       kind: 'text-area',
       name: 'issuer',
-      label: 'Пасспорт выдан',
+      label: 'Паспорт выдан',
     },
     {
       kind: 'date',
