@@ -1,12 +1,7 @@
-import {
-  DocPassportForeignRF,
-  DocPassportRF,
-  DocSNILSRF,
-  DocView,
-} from '../../models';
 import { format } from 'date-fns';
+import { DocSNILSRF, DocView } from '../../models';
 
-export const snilsRF = (doc: DocSNILSRF): DocView => ({
+export const snilsRFForm = (doc: DocSNILSRF): DocView => ({
   title: 'СНИЛС РФ',
   fields: [
     {

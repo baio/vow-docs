@@ -66,6 +66,8 @@ export interface DocDriverLicenseRF {
   regionOfBirthEn: string;
   issueDate: string;
   expiryDate: string;
+  issuer: string;
+  issuerEn: string;
   issuerRegion: string;
   issuerRegionEn: string;
   categories: string;
