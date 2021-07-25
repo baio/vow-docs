@@ -63,7 +63,6 @@ export const parseCloudText = (
         status: 'success',
         date: data.docMeta.date,
       },
-      parsed: null,
       labeled: { label: data.docFormatted.kind },
       formatted: data.docFormatted,
     };

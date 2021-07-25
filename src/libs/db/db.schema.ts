@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS docs (
     storedProvider TEXT,
     storedUrl TEXT,
     storedStatus TEXT,
-    parsedWords TEXT,
     labeledLabel TEXT,
     content TEXT,
     lastName TEXT,

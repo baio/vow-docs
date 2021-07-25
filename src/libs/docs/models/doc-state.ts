@@ -7,10 +7,6 @@ export interface DocStored {
   date: number;
 }
 
-export interface DocParsed {
-  words: string[];
-}
-
 export type DocLabel = 'passport-rf' | 'unknown';
 
 export interface DocLabeled {
@@ -40,7 +36,6 @@ export type DocFormatted = DocPassportRF | DocUnknown;
 
 export interface DocState {
   stored?: DocStored;
-  parsed?: DocParsed;
   labeled?: DocLabeled;
   formatted?: DocFormatted;
 }

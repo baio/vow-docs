@@ -24,12 +24,11 @@ export class DocsRepositoryService {
 
   async updateDocState(id: string, docState: DocState) {
     // add one user with statement and values
-    const sqlcmd = `UPDATE docs SET storedProvider = ?, storedUrl = ?, storedStatus = ?, parsedWords = ?, labeledLabel = ? WHERE id = ?`;
+    const sqlcmd = `UPDATE docs SET storedProvider = ?, storedUrl = ?, storedStatus = ?, labeledLabel = ? WHERE id = ?`;
     const values = [
       docState.stored?.provider,
       docState.stored?.url,
       docState.stored?.status,
-      docState.parsed?.words && docState.parsed?.words.join(','),
       docState.labeled?.label,
       id,
     ];
@@ -196,11 +195,6 @@ export class DocsRepositoryService {
                 provider: m.storedProvider,
                 url: m.storedUrl,
                 status: m.storedStatus,
-              }
-            : null,
-          parsed: m.parsedWords
-            ? {
-                words: m.parsedWords.split(','),
               }
             : null,
           labeled: m.labeledLabel
