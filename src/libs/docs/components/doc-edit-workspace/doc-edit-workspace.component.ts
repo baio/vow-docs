@@ -40,6 +40,18 @@ export class AppDocEditWorkspaceComponent implements OnInit {
       key: 'passport-rf',
       label: 'Паспорт РФ',
     },
+    {
+      key: 'passport-foreign-rf',
+      label: 'Загран РФ',
+    },
+    {
+      key: 'snils-rf',
+      label: 'СНИЛС РФ',
+    },
+    {
+      key: 'driver-license-rf',
+      label: 'Водительское РФ',
+    },
   ];
 
   constructor(

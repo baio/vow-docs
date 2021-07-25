@@ -10,7 +10,7 @@
       <ion-fab-button>
         <ion-icon name="copy-outline" (click)="onCopyClipboard(view.doc)"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button color="secondary" (click)="onViewImage(view.doc)">
+      <ion-fab-button color="secondary" (click)="onViewImage(view.doc, {imageType: 'main'})">
         <ion-icon name="eye-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
