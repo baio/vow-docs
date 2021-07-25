@@ -5,11 +5,19 @@
     </ion-slide>
   </ion-slides>
   <div class="title-overlay">
-    <ion-fab-button size="small" color="primary" *ngIf="view.showCameraButton" (click)="onCameraClicked($event)">
-      <ion-icon name="camera-outline"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button size="small" color="light" (click)="onLinkClicked($event, view.activeSlideIndex)">
-      <ion-icon [name]="view.linkButtonMode === 'link' ? 'link-outline' : 'unlink-outline'"></ion-icon>
-    </ion-fab-button>
+    <ion-row>
+      <ion-col>
+      </ion-col>
+      <ion-col size="2">
+        <ion-fab-button size="small" color="primary" *ngIf="view.showCameraButton" (click)="onCameraClicked($event)">
+          <ion-icon name="camera-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-col>
+      <ion-col size="2">
+        <ion-fab-button size="small" color="light" (click)="onLinkClicked($event, view.activeSlideIndex)">
+          <ion-icon [name]="view.linkButtonMode === 'link' ? 'link-outline' : 'unlink-outline'"></ion-icon>
+        </ion-fab-button>
+      </ion-col>
+    </ion-row>
   </div>
 </div>
