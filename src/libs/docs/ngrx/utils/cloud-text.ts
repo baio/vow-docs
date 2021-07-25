@@ -11,6 +11,8 @@ import {
   parseUnknownCloudText,
 } from './unknown-cloud-text';
 
+const VERSION = '1';
+
 export const formatCloudText = (doc: Doc) => {
   const meta = {
     tags: doc.tags,
@@ -18,6 +20,14 @@ export const formatCloudText = (doc: Doc) => {
     comment: doc.comment,
     attachments: doc.attachments,
   } as DocMeta;
+  const formatted = doc.formatted || null;
+  const json = {
+    version: VERSION,
+    meta,
+    formatted,
+  };
+  return JSON.stringify(json);
+  /*
   if (doc.formatted) {
     switch (doc.formatted.kind) {
       case 'passport-rf':
@@ -30,6 +40,7 @@ export const formatCloudText = (doc: Doc) => {
   } else {
     return formatEmptyCloudText(meta);
   }
+  */
 };
 
 export const parseCloudText = (
@@ -39,6 +50,11 @@ export const parseCloudText = (
   imgBase64: string,
   viewUrl: string
 ): Doc => {
+  if (!text) {
+    return null;
+  }
+  const data: { meta: DocMeta; formatted: DocFormatted } = JSON.parse(text);
+  /*
   let data: { docFormatted: DocFormatted; docMeta: DocMeta } =
     parsePassportRFCloudText(text);
   if (!data) {
@@ -47,24 +63,21 @@ export const parseCloudText = (
   if (!data) {
     data = parseEmptyCloudText(text);
   }
-  if (!data) {
-    return null;
-  } else {
-    return {
-      id,
-      imgBase64,
-      date: data.docMeta.date,
-      tags: data.docMeta.tags,
-      comment: data.docMeta.comment,
-      attachments: data.docMeta.attachments,
-      stored: {
-        provider,
-        url: viewUrl,
-        status: 'success',
-        date: data.docMeta.date,
-      },
-      labeled: { label: data.docFormatted.kind },
-      formatted: data.docFormatted,
-    };
-  }
+  */
+  return {
+    id,
+    imgBase64,
+    date: data.meta.date,
+    tags: data.meta.tags,
+    comment: data.meta.comment,
+    attachments: data.meta.attachments,
+    stored: {
+      provider,
+      url: viewUrl,
+      status: 'success',
+      date: data.meta.date,
+    },
+    labeled: data.formatted ? { label: data.formatted.kind } : null,
+    formatted: data.formatted,
+  };
 };

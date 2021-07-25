@@ -24,7 +24,7 @@ export const unknownForm: DocForm = {
     },
     {
       kind: 'date',
-      name: 'issueDate',
+      name: 'date',
       label: 'Дата',
     },
     {

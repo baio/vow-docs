@@ -5,10 +5,6 @@ export const unknown = (doc: DocUnknown): DocView => ({
   title: 'Другое',
   fields: [
     {
-      label: 'Текст',
-      value: doc.text || null,
-    },
-    {
       label: 'Фамилия Имя Очество',
       value:
         doc.lastName || doc.firstName || doc.middleName
@@ -22,6 +18,10 @@ export const unknown = (doc: DocUnknown): DocView => ({
     {
       label: 'Дата',
       value: doc.date && format(new Date(doc.date), 'dd.MM.yyyy'),
+    },
+    {
+      label: 'Текст',
+      value: doc.text || null,
     },
   ],
 });

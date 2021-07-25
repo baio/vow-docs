@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   profileSocialLogin,
   selectProfileState,
-  selectSocialAuthState
+  selectSocialAuthState,
 } from '@app/profile';
 import { appDownloadDocsFromCloud } from '@app/shared';
 import { AlertController } from '@ionic/angular';
@@ -19,7 +19,7 @@ import {
   switchMap,
   take,
   tap,
-  withLatestFrom
+  withLatestFrom,
 } from 'rxjs/operators';
 import { YaDiskService } from 'src/libs/ya-disk';
 import { Doc, DocAttachment } from '../models';
@@ -45,7 +45,7 @@ import {
   uploadCloudDoc,
   uploadCloudDocConfirmed,
   uploadCloudDocError,
-  uploadCloudDocSuccess
+  uploadCloudDocSuccess,
 } from './actions';
 import { selectDoc, selectDocs, selectDocWithAttachments } from './selectors';
 import { formatCloudText, parseCloudText } from './utils/cloud-text';
@@ -228,7 +228,7 @@ export class CloudEffects {
             imageBase64: doc.imgBase64,
             imgFileName: `${doc.id}.jpeg`,
             text: cloudText,
-            textFileName: `${doc.id}.txt`,
+            textFileName: `${doc.id}.json`,
           }),
           ...attachments.map((m) =>
             this.yaDisk.uploadImage(
@@ -311,7 +311,7 @@ export class CloudEffects {
         forkJoin(
           [
             `${doc.id}.jpeg`,
-            `${doc.id}.txt`,
+            `${doc.id}.json`,
             ...(doc.attachments || []).map((m) => `attachment-${m}.jpeg`),
           ].map((m) => this.yaDisk.removeFile(token, m))
         ).pipe(
@@ -383,7 +383,7 @@ export class CloudEffects {
       switchMap(({ doc, socialAuthState }) => {
         const cloudText = formatCloudText(doc);
         return this.yaDisk
-          .uploadText(socialAuthState.token, cloudText, `${doc.id}.txt`)
+          .uploadText(socialAuthState.token, cloudText, `${doc.id}.json`)
           .pipe(
             switchMap(() => EMPTY),
             catchError((error) => of(uploadCloudDocError({ error, doc })))
@@ -420,7 +420,7 @@ export class CloudEffects {
             imageBase64: base64,
             imgFileName: `attachment-${attachmentId}.jpeg`,
             text: cloudText,
-            textFileName: `${doc.id}.txt`,
+            textFileName: `${doc.id}.json`,
           });
         })
       ),
@@ -440,7 +440,7 @@ export class CloudEffects {
             return EMPTY;
           }
           return forkJoin([
-            this.yaDisk.uploadText(token, cloudText, `${doc.id}.txt`),
+            this.yaDisk.uploadText(token, cloudText, `${doc.id}.json`),
             this.yaDisk.removeFile(token, `attachment-${attachmentId}.jpeg`),
           ]);
         })
@@ -465,12 +465,12 @@ export class CloudEffects {
       switchMap(([{ diskFilesResult, provider, token }, docs]) => {
         const diskFiles = diskFilesResult.map((f) => ({
           // id not uniq here !!!
-          id: f.name.replace(/^attachment-|\.txt$|\.jpeg$/g, ''),
+          id: f.name.replace(/^attachment-|\.json$|\.jpeg$/g, ''),
           name: f.name,
           file: f.url,
           type: /^attachment-/.test(f.name)
             ? 'attachment'
-            : /\.txt$/.test(f.name)
+            : /\.json$/.test(f.name)
             ? 'data'
             : 'image',
           viewUrl: f.viewUrl,
@@ -509,32 +509,38 @@ export class CloudEffects {
               const attachments = (doc.attachments || []).map(
                 (m) => diskFilesHash[`attachment-${m}.jpeg`]
               );
-              return forkJoin(
-                attachments.map((m) =>
-                  m
-                    ? this.yaDisk
-                        .readFileAsImageBase64(m.file)
-                        .pipe(map((r) => ({ ...r, id: m.id })))
-                        .pipe(catchError(() => of(null)))
-                    : of(null)
-                )
-              ).pipe(
-                map((attachmentsResult: { id: string; data: string }[]) => {
-                  const existentAttachments = attachmentsResult.filter(
-                    (r) => !!r
+              return attachments.length === 0
+                ? of({
+                    doc,
+                    docAttachments: [],
+                  })
+                : forkJoin(
+                    attachments.map((m) =>
+                      m
+                        ? this.yaDisk
+                            .readFileAsImageBase64(m.file)
+                            .pipe(map((r) => ({ ...r, id: m.id })))
+                            .pipe(catchError(() => of(null)))
+                        : of(null)
+                    )
+                  ).pipe(
+                    map((attachmentsResult: { id: string; data: string }[]) => {
+                      const existentAttachments = attachmentsResult.filter(
+                        (r) => !!r
+                      );
+                      const docAttachments = existentAttachments.map(
+                        (m) =>
+                          ({ id: m.id, imgBase64: m.data } as DocAttachment)
+                      );
+                      return {
+                        doc: {
+                          ...doc,
+                          attachments: existentAttachments.map((m) => m.id),
+                        },
+                        docAttachments,
+                      };
+                    })
                   );
-                  const docAttachments = existentAttachments.map(
-                    (m) => ({ id: m.id, imgBase64: m.data } as DocAttachment)
-                  );
-                  return {
-                    doc: {
-                      ...doc,
-                      attachments: existentAttachments.map((m) => m.id),
-                    },
-                    docAttachments,
-                  };
-                })
-              );
             })
           );
         });
