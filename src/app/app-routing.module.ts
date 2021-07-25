@@ -4,6 +4,7 @@ import {
   AppAuthenticateComponent,
   AppAuthGuard,
   AppAuthModule,
+  AppIgnoreAuthGuard,
 } from '@app/auth';
 import { tabsRoutes } from './tabs/tabs.module';
 
@@ -11,6 +12,7 @@ const routes: Routes = [
   {
     path: 'login',
     component: AppAuthenticateComponent,
+    canActivate: [AppIgnoreAuthGuard],
   },
 
   {
