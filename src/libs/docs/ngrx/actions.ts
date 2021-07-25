@@ -60,7 +60,7 @@ export const copyClipboard = createAction(
 
 export const showFullScreenImage = createAction(
   '[Docs] Show Full Screen Image',
-  props<{ doc: Doc }>()
+  props<{ doc: Doc; attachmentIndex?: number }>()
 );
 
 export const addDocTag = createAction(

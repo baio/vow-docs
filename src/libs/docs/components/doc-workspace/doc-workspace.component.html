@@ -41,7 +41,7 @@
     </ion-fab-list>
   </ion-fab>
   <app-doc-display [docView]="view.docView" [imgBase64]="view.doc.imgBase64"
-    [attachmentsBase64]="view.attachmentsBase64" (imageClick)="onViewImage(view.doc)"
+    [attachmentsBase64]="view.attachmentsBase64" (imageClick)="onViewImage(view.doc, $event)"
     (cameraClick)="onImageCameraClick(view.doc)" (linkClick)="onImageLinkClick(view.doc)"
     (unlinkClick)="onImageUnLinkClick(view.doc, $event)">
   </app-doc-display>

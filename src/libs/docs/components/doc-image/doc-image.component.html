@@ -2,11 +2,11 @@
   <ion-slides *ngIf="view.images.length > 1 else singleImage" [pager]="true" [options]="slideOpts"
     (ionSlideDidChange)="onSlideChanged()">
     <ion-slide *ngFor="let img of view.images; trackBy: trackByImage">
-      <img class="doc-image" [src]="img" />
+      <img class="doc-image" [src]="img" (click)="onImageClick(view.activeSlideIndex)" />
     </ion-slide>
   </ion-slides>
   <ng-template #singleImage>
-    <img class="doc-image" [src]="view.images[0]" />
+    <img class="doc-image" [src]="view.images[0]" (click)="onImageClick()" />
   </ng-template>
   <div class="title-overlay">
     <ion-row>

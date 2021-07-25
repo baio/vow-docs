@@ -30,6 +30,7 @@ import {
 import { selectDocWithAttachments } from '../../ngrx/selectors';
 import { CameraService } from '../../services/camera.service';
 import { docFormattedToView } from '../../utils';
+import { ImageClickEvent } from '../doc-image/doc-image.component';
 
 /**
  * hidden - no provider and doc is online
@@ -150,8 +151,10 @@ export class AppDocWorkspaceComponent implements OnInit {
     await actionSheet.present();
   }
 
-  onViewImage(doc: Doc) {
-    this.store.dispatch(showFullScreenImage({ doc }));
+  onViewImage(doc: Doc, $event: ImageClickEvent) {
+    this.store.dispatch(
+      showFullScreenImage({ doc, attachmentIndex: $event.attachmentIndex })
+    );
   }
 
   onCopyClipboard(doc: Doc) {

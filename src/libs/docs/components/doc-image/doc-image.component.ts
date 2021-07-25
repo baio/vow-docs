@@ -18,6 +18,11 @@ export interface AppDocImageView {
   linkButtonMode: 'link' | 'unlink';
 }
 
+export interface ImageClickEvent {
+  imageType: 'main' | 'attachment';
+  attachmentIndex?: number;
+}
+
 @Component({
   selector: 'app-doc-image',
   templateUrl: 'doc-image.component.html',
@@ -46,6 +51,7 @@ export class AppDocImageComponent implements AfterViewInit {
   @Output() cameraClick = new EventEmitter();
   @Output() linkClick = new EventEmitter();
   @Output() unlinkClick = new EventEmitter<number>();
+  @Output() imageClick = new EventEmitter<ImageClickEvent>();
 
   @ViewChild(IonSlides) ionSlides: IonSlides;
 
@@ -110,5 +116,16 @@ export class AppDocImageComponent implements AfterViewInit {
     }
     // there is could be potential slide change!
     setTimeout(() => this.onSlideChanged(), 0);
+  }
+
+  onImageClick(index?: number) {
+    if (index === undefined) {
+      this.imageClick.emit({ imageType: 'main' });
+    } else {
+      this.imageClick.emit({
+        imageType: index === 0 ? 'main' : 'attachment',
+        attachmentIndex: index === 0 ? undefined : index - 1,
+      });
+    }
   }
 }

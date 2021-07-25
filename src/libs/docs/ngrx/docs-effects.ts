@@ -45,7 +45,7 @@ import {
   updateDocImage,
   updateDocState,
 } from './actions';
-import { selectDoc } from './selectors';
+import { selectAttachments, selectDoc } from './selectors';
 
 @Injectable()
 export class DocsEffects {
@@ -351,11 +351,16 @@ export class DocsEffects {
     () =>
       this.actions$.pipe(
         ofType(showFullScreenImage),
-        tap(async ({ doc }) => {
+        withLatestFrom(this.store.select(selectAttachments)),
+        tap(async ([{ doc, attachmentIndex }, attachments]) => {
+          const imgBase64 =
+            attachmentIndex === undefined
+              ? doc.imgBase64
+              : attachments[doc.attachments[attachmentIndex]].imgBase64;
           const modal = await this.modalController.create({
             component: AppFullScreenImageComponent,
             componentProps: {
-              imgBase64: doc.imgBase64,
+              imgBase64,
             },
           });
           await modal.present();
