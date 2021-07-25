@@ -22,6 +22,32 @@ export class DocsRepositoryService {
     console.log('$$$ addDoc result', res);
   }
 
+  async createDoc(doc: Doc) {
+    // add one user with statement and values
+    const sqlcmd =
+      // eslint-disable-next-line max-len
+      'INSERT INTO docs (id,imgBase64,storedProvider,storedUrl,storedStatus,labeledLabel,content,lastName,firstMiddleName,createDate,tags,comment,attachments) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+    const values = [
+      doc.id,
+      doc.imgBase64,
+      doc.stored?.provider,
+      doc.stored?.url,
+      doc.stored?.status,
+      doc.labeled?.label,
+      doc.formatted && JSON.stringify(doc.formatted),
+      doc.formatted?.lastName,
+      doc.formatted && (doc.formatted.firstName || doc.formatted.lastName)
+        ? [doc.formatted.firstName, doc.formatted.lastName].join(' ')
+        : null,
+      new Date().getTime(),
+      doc.tags && doc.tags.join(','),
+      doc.comment,
+      doc.attachments && doc.attachments.join(','),
+    ];
+    const res = await this.db.runCommand(sqlcmd, values);
+    console.log('$$$ addDoc result', res);
+  }
+
   async updateDocState(id: string, docState: DocState) {
     // add one user with statement and values
     const sqlcmd = `UPDATE docs SET storedProvider = ?, storedUrl = ?, storedStatus = ?, labeledLabel = ? WHERE id = ?`;
@@ -127,7 +153,7 @@ export class DocsRepositoryService {
     //
   }
 
-  private async addDocAttachmentToAttachments(
+  async addDocAttachmentToAttachments(
     attachmentId: string,
     imageBase64: string
   ) {

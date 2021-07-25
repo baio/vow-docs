@@ -29,6 +29,7 @@ import {
   addDocSuccess,
   addDocTag,
   addDocument,
+  cloudDocImported,
   copyClipboard,
   deleteDoc,
   deleteDocConfirmed,
@@ -400,6 +401,25 @@ export class DocsEffects {
         tap(({ doc, attachmentIndex }) => {
           this.docRepository.removeDocAttachment(doc, attachmentIndex);
         })
+      ),
+    { dispatch: false }
+  );
+
+  cloudDocImported$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(cloudDocImported),
+        tap(({ doc, docAttachments }) =>
+          Promise.all([
+            this.docRepository.createDoc(doc),
+            ...(docAttachments || []).map((m) =>
+              this.docRepository.addDocAttachmentToAttachments(
+                m.id,
+                m.imgBase64
+              )
+            ),
+          ])
+        )
       ),
     { dispatch: false }
   );
