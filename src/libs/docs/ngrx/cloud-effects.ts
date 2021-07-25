@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   profileSocialLogin,
   selectProfileState,
-  selectSocialAuthState,
+  selectSocialAuthState
 } from '@app/profile';
 import { appDownloadDocsFromCloud } from '@app/shared';
 import { AlertController } from '@ionic/angular';
@@ -19,7 +19,7 @@ import {
   switchMap,
   take,
   tap,
-  withLatestFrom,
+  withLatestFrom
 } from 'rxjs/operators';
 import { YaDiskService } from 'src/libs/ya-disk';
 import { Doc, DocAttachment } from '../models';
@@ -45,9 +45,9 @@ import {
   uploadCloudDoc,
   uploadCloudDocConfirmed,
   uploadCloudDocError,
-  uploadCloudDocSuccess,
+  uploadCloudDocSuccess
 } from './actions';
-import { selectDoc, selectDocs } from './selectors';
+import { selectDoc, selectDocs, selectDocWithAttachments } from './selectors';
 import { formatCloudText, parseCloudText } from './utils/cloud-text';
 
 @Injectable()
@@ -211,29 +211,42 @@ export class CloudEffects {
       ofType(uploadCloudDocConfirmed),
       withLatestFrom(this.store.select(selectSocialAuthState)),
       filter(([_, socialAuthState]) => !!socialAuthState),
-      switchMap(([{ doc }, socialAuthState]) => {
+      switchMap(([{ doc }, socialAuthState]) =>
+        this.store.select(selectDocWithAttachments(doc.id)).pipe(
+          take(1),
+          map(({ attachments }) => ({ attachments, doc, socialAuthState }))
+        )
+      ),
+      switchMap(({ doc, attachments, socialAuthState }) => {
         const cloudText = formatCloudText(doc);
         if (!cloudText) {
           return EMPTY;
         }
-        return this.yaDisk
-          .uploadDocument({
+        return forkJoin([
+          this.yaDisk.uploadDocument({
             token: socialAuthState.token,
             imageBase64: doc.imgBase64,
             imgFileName: `${doc.id}.jpeg`,
             text: cloudText,
             textFileName: `${doc.id}.txt`,
-          })
-          .pipe(
-            map(({ imageFileUrl }) =>
-              uploadCloudDocSuccess({
-                doc,
-                url: imageFileUrl,
-                provider: socialAuthState.provider,
-              })
-            ),
-            catchError((error) => of(uploadCloudDocError({ error, doc })))
-          );
+          }),
+          ...attachments.map((m) =>
+            this.yaDisk.uploadImage(
+              socialAuthState.token,
+              m.imgBase64,
+              `attachment-${m.id}.jpeg`
+            )
+          ),
+        ]).pipe(
+          map(([{ imageFileUrl }]: any) =>
+            uploadCloudDocSuccess({
+              doc,
+              url: imageFileUrl,
+              provider: socialAuthState.provider,
+            })
+          ),
+          catchError((error) => of(uploadCloudDocError({ error, doc })))
+        );
       })
     )
   );
