@@ -9,7 +9,12 @@ export interface DocStored {
   date: number;
 }
 
-export type DocLabel = 'passport-rf' | 'unknown';
+export type DocLabel =
+  | 'passport-rf'
+  | 'unknown'
+  | 'passport-foreign-rf'
+  | 'snils-rf'
+  | 'driver-license-rf';
 
 export interface DocLabeled {
   label: DocLabel;

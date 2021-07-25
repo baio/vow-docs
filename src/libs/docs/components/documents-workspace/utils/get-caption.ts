@@ -1,34 +1,41 @@
-import { DocFormatted } from '../../../models';
+import { DocFormatted, DocLabel } from '../../../models';
 
 export interface DocCaption {
   title: string;
   subTitle: string;
 }
 
-export const getCaption = (formatted: DocFormatted): DocCaption => {
-  switch (formatted.kind) {
+const getSubtitle = (label: DocLabel) => {
+  switch (label) {
     case 'unknown':
-      return {
-        title:
-          formatted.lastName || formatted.firstName || formatted.middleName
-            ? [formatted.lastName, formatted.firstName, formatted.middleName]
-                .join(' ')
-                .trim()
-            : null,
-
-        subTitle: 'Другое',
-      };
+      return 'Другое';
     case 'passport-rf':
-      return {
-        title:
-          formatted.lastName || formatted.firstName || formatted.middleName
-            ? [formatted.lastName, formatted.firstName, formatted.middleName]
-                .join(' ')
-                .trim()
-            : null,
-        subTitle: 'Паспорт РФ',
-      };
+      return 'Паспорт';
+    case 'passport-foreign-rf':
+      return 'Загран';
+    case 'snils-rf':
+      return 'СНИЛС';
+    case 'driver-license-rf':
+      return 'Водительское';
     default:
-      return null;
+      return 'Неизвестный';
   }
+};
+
+export const getCaption = (formatted: DocFormatted): DocCaption => {
+  const subTitle = getSubtitle(formatted.kind);
+  return {
+    title:
+      formatted.lastName || formatted.firstName || (formatted as any).middleName
+        ? [
+            formatted.lastName,
+            formatted.firstName,
+            (formatted as any).middleName,
+          ]
+            .join(' ')
+            .trim()
+        : null,
+
+    subTitle,
+  };
 };
