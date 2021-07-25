@@ -5,7 +5,13 @@ import Fuse from 'fuse.js';
 const getDocTypeName = (docLabel: DocLabel) => {
   switch (docLabel) {
     case 'passport-rf':
-      return 'паспорт';
+      return 'паспорт passport';
+    case 'passport-foreign-rf':
+      return 'загран паспорт foreign passport';
+    case 'snils-rf':
+      return 'снилс пенсионное страховое';
+    case 'driver-license-rf':
+      return 'водительское удостовернеие';
     case 'unknown':
       return 'другое';
     default:
