@@ -1,13 +1,9 @@
 <div class="img-content" *ngIf="view$ | async as view">
-  <ion-slides *ngIf="view.images.length > 2 else singleImage" [pager]="true" [options]="slideOpts"
-    (ionSlideDidChange)="onSlideChanged()">
+  <ion-slides [pager]="true" [options]="slideOpts" (ionSlideDidChange)="onSlideChanged()">
     <ion-slide *ngFor="let img of view.images; trackBy: trackByImage">
       <img class="doc-image" [src]="img" />
     </ion-slide>
   </ion-slides>
-  <ng-template #singleImage>
-    <img class="doc-image" [src]="view.images[0]" />
-  </ng-template>
   <div class="title-overlay">
     <ion-row>
       <ion-col>
