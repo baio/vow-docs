@@ -77,7 +77,9 @@ export class AppDocImageComponent implements AfterViewInit {
   ngAfterViewInit() {
     // Workaround swiper does not work after second init
     setTimeout(async () => {
-      (await this.ionSlides.getSwiper()).update();
+      if (this.ionSlides) {
+        (await this.ionSlides.getSwiper()).update();
+      }
     }, 100);
   }
 
@@ -86,7 +88,9 @@ export class AppDocImageComponent implements AfterViewInit {
   }
 
   async onSlideChanged() {
-    const activeIndex = await this.ionSlides.getActiveIndex();
+    const activeIndex = this.ionSlides
+      ? await this.ionSlides.getActiveIndex()
+      : 0;
     this.activeSlideIndex$.next(activeIndex);
   }
 
