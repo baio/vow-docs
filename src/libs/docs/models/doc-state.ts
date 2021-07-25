@@ -1,3 +1,5 @@
+import { DocFormatted } from './doc-formatted';
+
 export type DocStoredStatus = 'progress' | 'success' | 'error';
 
 export interface DocStored {
@@ -12,27 +14,6 @@ export type DocLabel = 'passport-rf' | 'unknown';
 export interface DocLabeled {
   label: DocLabel;
 }
-
-export interface DocUnknown {
-  kind: 'unknown';
-  text: string;
-}
-
-export interface DocPassportRF {
-  kind: 'passport-rf';
-  lastName: string;
-  firstName: string;
-  middleName: string;
-  identifier: string;
-  issuer: string;
-  issueDate: string;
-  sex: string;
-  dateOfBirth: string;
-  placeOfBirth: string;
-  departmentCode: string;
-}
-
-export type DocFormatted = DocPassportRF | DocUnknown;
 
 export interface DocState {
   stored?: DocStored;

@@ -9,7 +9,13 @@ export const getCaption = (formatted: DocFormatted): DocCaption => {
   switch (formatted.kind) {
     case 'unknown':
       return {
-        title: formatted.text && formatted.text.substring(0, 20),
+        title:
+          formatted.lastName || formatted.firstName || formatted.middleName
+            ? [formatted.lastName, formatted.firstName, formatted.middleName]
+                .join(' ')
+                .trim()
+            : null,
+
         subTitle: 'Другое',
       };
     case 'passport-rf':

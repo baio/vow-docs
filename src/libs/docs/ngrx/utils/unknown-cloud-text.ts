@@ -3,6 +3,8 @@ import { DocMeta } from './doc-meta';
 import {
   flatStr,
   flatTags,
+  formatDate,
+  parseDate,
   parseLines,
   unFlatStr,
   unFlatTags,
@@ -18,6 +20,16 @@ export const formatUnknownCloudText = (
   ${VERSION}
   ТИП ДОКУМЕНТА
   НЕИЗВЕСТНЫЙ
+  ФАМИЛИЯ
+  ${docFormatted.lastName || ''}
+  ИМЯ
+  ${docFormatted.firstName || ''}
+  ОЧЕСТВО
+  ${docFormatted.middleName || ''}
+  НОМЕР
+  ${docFormatted.identifier || ''}
+  ДАТА
+  ${formatDate(docFormatted.date)}
   ТЕКСТ
   ${flatStr(docFormatted.text)}
   ТАГИ
@@ -38,13 +50,18 @@ export const parseUnknownCloudText = (text: string) => {
     const docFormatted = {
       kind: 'unknown',
       text: unFlatStr(lines[5]),
+      lastName: lines[5] || null,
+      firstName: lines[7] || null,
+      middleName: lines[9] || null,
+      identifier: lines[11] || null,
+      date: parseDate(lines[13]),
     } as DocUnknown;
 
     const docMeta = {
-      tags: unFlatTags(lines[7]),
-      comment: unFlatStr(lines[9]),
-      date: lines[11] ? +lines[11] : null,
-      attachments: unFlatTags(lines[13]),
+      tags: unFlatTags(lines[15]),
+      comment: unFlatStr(lines[17]),
+      date: lines[19] ? +lines[19] : null,
+      attachments: unFlatTags(lines[21]),
     } as DocMeta;
     return {
       docFormatted,
