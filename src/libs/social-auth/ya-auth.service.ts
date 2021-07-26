@@ -27,6 +27,10 @@ export const YA_AUTH_CONFIG = new InjectionToken<YaAuthConfig>(
 export class YaAuthService {
   constructor(@Inject(YA_AUTH_CONFIG) private readonly config: YaAuthConfig) {}
 
+  setDeviceId(deviceId: string) {
+    this.config.deviceId = deviceId;
+  }
+
   async login(): Promise<string> {
     const qs = {
       response_type: 'token',
@@ -39,6 +43,9 @@ export class YaAuthService {
       display: 'popup',
       state: YA_VOW_DOCS_AUTH_STATE,
     };
+
+    console.log('wtf ???', qs);
+
     const url = `https://oauth.yandex.com/authorize${jsonToQueryString(qs)}`;
 
     await Browser.open({ url });

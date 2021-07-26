@@ -76,7 +76,9 @@ export class AppAuthenticateComponent {
   }
 
   async onPinSet(pin: string) {
-    this.authService.setPin(pin, true);
+    this.notificationsService.notify(Notification.SetPinSuccess);
+    await this.authService.setPin(pin, true);
+    this.authService.setAuthenticated();
     this.router.navigateByUrl('/', { replaceUrl: true });
   }
 

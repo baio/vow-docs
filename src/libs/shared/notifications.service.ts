@@ -4,6 +4,7 @@ import { ToastController } from '@ionic/angular';
 
 export enum Notification {
   LoginSuccess,
+  SetPinSuccess,
   CloudAuthSuccess,
   CloudAuthError,
   CloudDocumentsImportStarted,
@@ -19,6 +20,10 @@ type NotificationType = 'success' | 'error' | 'info';
 
 const getText = (notification: Notification) => {
   switch (notification) {
+    case Notification.LoginSuccess:
+      return 'Успешный вход';
+    case Notification.SetPinSuccess:
+      return 'Пин установлен';
     case Notification.LoginSuccess:
       return 'Успешный вход';
     case Notification.CloudAuthSuccess:
@@ -47,6 +52,8 @@ const getText = (notification: Notification) => {
 const getType = (notification: Notification): NotificationType => {
   switch (notification) {
     case Notification.LoginSuccess:
+      return 'success';
+    case Notification.SetPinSuccess:
       return 'success';
     case Notification.CloudAuthSuccess:
       return 'success';

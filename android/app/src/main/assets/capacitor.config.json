@@ -1,5 +1,5 @@
 {
-	"appId": "io.ionic.starter",
+	"appId": "io.ionic.vowdocs",
 	"appName": "vow-docs",
 	"webDir": "www",
 	"bundledWebRuntime": false,
@@ -9,5 +9,8 @@
 			"launchAutoHide": true,
 			"backgroundColor": "ffffffff"
 		}
+	},
+	"server": {
+		"url": "http://192.168.0.103:8100"
 	}
 }

@@ -3,7 +3,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'io.ionic.vowdocs',
   appName: 'vow-docs',
   webDir: 'www',
   bundledWebRuntime: false,
