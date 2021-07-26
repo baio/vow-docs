@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { selectSocialAuthState } from '@app/profile';
-import { appStarted } from '@app/shared';
+import { appStarted, Notification, NotificationsService } from '@app/shared';
 import { Clipboard } from '@capacitor/clipboard';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
@@ -11,7 +11,9 @@ import {
 } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { EMPTY, Observable } from 'rxjs';
 import {
+  catchError,
   filter,
   map,
   switchMap,
@@ -50,13 +52,22 @@ import { selectAttachments, selectDoc } from './selectors';
 
 @Injectable()
 export class DocsEffects {
+  handleDocSaveError = ($: Observable<any>) =>
+    $.pipe(
+      catchError(() => {
+        this.notificationsService.notify(Notification.SaveDocError);
+        return EMPTY;
+      })
+    );
+
   constructor(
     private readonly actions$: Actions,
     private readonly modalController: ModalController,
     private readonly docRepository: DocsRepositoryService,
     private readonly toastController: ToastController,
     private readonly store: Store,
-    private readonly actionSheetController: ActionSheetController
+    private readonly actionSheetController: ActionSheetController,
+    private readonly notificationsService: NotificationsService
   ) {}
 
   appStart$ = createEffect(() =>
@@ -101,7 +112,8 @@ export class DocsEffects {
     () =>
       this.actions$.pipe(
         ofType(addDocument),
-        switchMap(({ id, base64 }) => this.docRepository.addDoc(id, base64))
+        switchMap(({ id, base64 }) => this.docRepository.addDoc(id, base64)),
+        this.handleDocSaveError
       ),
     { dispatch: false }
   );
@@ -112,7 +124,8 @@ export class DocsEffects {
         ofType(updateDocImage),
         switchMap(({ doc, base64 }) =>
           this.docRepository.updateDocImage(doc.id, base64)
-        )
+        ),
+        this.handleDocSaveError
       ),
     { dispatch: false }
   );
@@ -207,7 +220,8 @@ export class DocsEffects {
         ofType(updateDocState),
         tap(({ id, docState }) =>
           this.docRepository.updateDocState(id, docState)
-        )
+        ),
+        this.handleDocSaveError
       ),
     { dispatch: false }
   );
@@ -216,7 +230,8 @@ export class DocsEffects {
     () =>
       this.actions$.pipe(
         ofType(setDocComment),
-        tap(({ id, comment }) => this.docRepository.setDocComment(id, comment))
+        tap(({ id, comment }) => this.docRepository.setDocComment(id, comment)),
+        this.handleDocSaveError
       ),
     { dispatch: false }
   );
@@ -274,7 +289,8 @@ export class DocsEffects {
         tap(async ({ doc }) => {
           await this.modalController.dismiss();
           await this.docRepository.deleteDoc(doc.id, doc.attachments);
-        })
+        }),
+        this.handleDocSaveError
       ),
     { dispatch: false }
   );
@@ -285,7 +301,8 @@ export class DocsEffects {
         ofType(updateDocFormatted),
         tap(({ id, docFormatted }) =>
           this.docRepository.updateDocFormatted(id, docFormatted)
-        )
+        ),
+        this.handleDocSaveError
       ),
     { dispatch: false }
   );
@@ -343,6 +360,9 @@ export class DocsEffects {
             duration: 1000,
           });
           await toast.present();
+          await this.notificationsService.notify(
+            Notification.DocCopiedToClipboard
+          );
         })
       ),
     { dispatch: false }
@@ -378,7 +398,8 @@ export class DocsEffects {
         switchMap(({ id }) => this.store.select(selectDoc(id)).pipe(take(1))),
         tap((doc) => {
           this.docRepository.setDocTags(doc.id, doc.tags);
-        })
+        }),
+        this.handleDocSaveError
       ),
     { dispatch: false }
   );
@@ -389,7 +410,8 @@ export class DocsEffects {
         ofType(addDocAttachment),
         tap(({ doc, id, base64 }) => {
           this.docRepository.addDocAttachment(doc, id, base64);
-        })
+        }),
+        this.handleDocSaveError
       ),
     { dispatch: false }
   );
@@ -419,7 +441,8 @@ export class DocsEffects {
               )
             ),
           ])
-        )
+        ),
+        this.handleDocSaveError
       ),
     { dispatch: false }
   );

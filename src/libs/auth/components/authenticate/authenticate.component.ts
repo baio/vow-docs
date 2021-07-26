@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Notification, NotificationsService } from '@app/shared';
 import { App } from '@capacitor/app';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -23,7 +24,8 @@ export class AppAuthenticateComponent {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly notificationsService: NotificationsService
   ) {
     const setup$ = this.setupAuth();
     this.view$ = combineLatest([setup$, this.pinError$]).pipe(
@@ -84,6 +86,7 @@ export class AppAuthenticateComponent {
     if (pin !== expectedPin) {
       this.pinError$.next(true);
     } else {
+      this.notificationsService.notify(Notification.LoginSuccess);
       this.authService.setAuthenticated();
       this.router.navigateByUrl('/');
     }

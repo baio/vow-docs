@@ -4,12 +4,16 @@ import {
   selectProfileState,
   selectSocialAuthState,
 } from '@app/profile';
-import { appDownloadDocsFromCloud } from '@app/shared';
+import {
+  appDownloadDocsFromCloud,
+  Notification,
+  NotificationsService,
+} from '@app/shared';
 import { AlertController } from '@ionic/angular';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fromPairs } from 'lodash';
-import { EMPTY, forkJoin, of } from 'rxjs';
+import { EMPTY, forkJoin, of, throwError } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -61,7 +65,8 @@ export class CloudEffects {
     private readonly store: Store,
     private readonly yaDisk: YaDiskService,
     private readonly docsRepository: DocsRepositoryService,
-    private readonly alertController: AlertController
+    private readonly alertController: AlertController,
+    private readonly notificationsService: NotificationsService
   ) {}
 
   addDoc$ = createEffect(() =>
@@ -453,13 +458,16 @@ export class CloudEffects {
       ofType(appDownloadDocsFromCloud),
       withLatestFrom(this.store.select(selectSocialAuthState)),
       filter(([_, socialAuthState]) => !!socialAuthState),
-      switchMap(([_, { token, provider }]) =>
-        this.yaDisk
+      switchMap(([_, { token, provider }]) => {
+        this.notificationsService.notify(
+          Notification.CloudDocumentsImportStarted
+        );
+        return this.yaDisk
           .readAllFiles(token)
           .pipe(
             map((diskFilesResult) => ({ diskFilesResult, provider, token }))
-          )
-      ),
+          );
+      }),
       withLatestFrom(this.store.select(selectDocs)),
       // eslint-disable-next-line arrow-body-style
       switchMap(([{ diskFilesResult, provider, token }, docs]) => {
@@ -485,6 +493,12 @@ export class CloudEffects {
         console.log('111', newDiskFiles);
         const diskFilesHash = fromPairs(diskFiles.map((m) => [m.name, m]));
         console.log('222', diskFilesHash);
+
+        // TODO
+        this.notificationsService.notify(
+          Notification.CloudDocumentsImportSuccess
+        );
+
         return newDiskFiles.map((f) => {
           const imgFile = diskFilesHash[f.id + '.jpeg'];
 
@@ -493,6 +507,7 @@ export class CloudEffects {
             return of(null);
           }
           console.log('333', f.file, imgFile.file);
+
           return forkJoin([
             this.yaDisk.readFileRawUrl(f.file),
             this.yaDisk.readFileRawUrlAsImageBase64(imgFile.file),
@@ -547,8 +562,14 @@ export class CloudEffects {
           );
         });
       }),
+      catchError((err) => {
+        this.notificationsService.notify(
+          Notification.CloudDocumentsImportError
+        );
+        return throwError(err);
+      }),
       mergeMap((m) => m),
-      tap(console.log),
+      //tap(console.log),
       map((m) => cloudDocImported(m))
     )
   );

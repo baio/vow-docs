@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { SecureStorageService } from '@app/secure-storage';
-import { appStarted } from '@app/shared';
+import { appStarted, Notification, NotificationsService } from '@app/shared';
 import { YaAuthService } from '@app/social-auth';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, NEVER } from 'rxjs';
@@ -33,7 +33,8 @@ export class ProfileEffects {
   constructor(
     private readonly actions$: Actions,
     private readonly yaAuthService: YaAuthService,
-    private readonly secureStorageService: SecureStorageService
+    private readonly secureStorageService: SecureStorageService,
+    private readonly notificationsService: NotificationsService
   ) {}
 
   appStarted$ = createEffect(() =>
@@ -78,6 +79,7 @@ export class ProfileEffects {
           SOCIAL_AUTH_TOKEN_KEY,
           socialAuthState.token
         );
+        this.notificationsService.notify(Notification.CloudAuthSuccess);
         if (continuation) {
           return continuation;
         } else {
