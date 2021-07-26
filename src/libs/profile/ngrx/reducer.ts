@@ -23,7 +23,9 @@ export const profileReducer = createReducer(
   ),
   on(profileRehydrateSuccess, (state, { socialAuthState, config }) => {
     state = assoc('socialAuthState', socialAuthState, state);
-    state = assoc('config', config, state);
+    if (config) {
+      state = assoc('config', config, state);
+    }
     return state;
   }),
   on(profileSocialLogout, (state) =>

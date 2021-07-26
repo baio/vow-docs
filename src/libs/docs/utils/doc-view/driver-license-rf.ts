@@ -31,15 +31,14 @@ export const driverLicenseRF = (doc: DocDriverLicenseRF): DocView => ({
       value: `${doc.regionOfBirth}/${doc.regionOfBirthEn}`,
     },
     {
-      col1: {
-        label: 'Дата Выдачи / Date of Issue',
-        value: doc.issueDate && format(new Date(doc.issueDate), 'dd.MM.yyyy'),
-      },
-      col2: {
-        label: 'Дата Окончания / Date of Expiry',
-        value: doc.expiryDate && format(new Date(doc.expiryDate), 'dd.MM.yyyy'),
-      },
+      label: 'Дата Выдачи / Date of Issue',
+      value: doc.issueDate && format(new Date(doc.issueDate), 'dd.MM.yyyy'),
     },
+    {
+      label: 'Дата Окончания / Date of Expiry',
+      value: doc.expiryDate && format(new Date(doc.expiryDate), 'dd.MM.yyyy'),
+    },
+
     {
       label: 'Регион / Region',
       value: `${doc.issuerRegion}/${doc.issuerRegionEn}`,
