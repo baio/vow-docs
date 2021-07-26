@@ -5,8 +5,12 @@
 	"bundledWebRuntime": false,
 	"plugins": {
 		"SplashScreen": {
-			"launchShowDuration": 3000,
-			"launchAutoHide": true
+			"launchShowDuration": 2000,
+			"launchAutoHide": true,
+			"backgroundColor": "ffffffff"
 		}
+	},
+	"server": {
+		"url": "http://192.168.0.103:8100"
 	}
 }

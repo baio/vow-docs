@@ -8,9 +8,11 @@ const config: CapacitorConfig = {
   webDir: 'www',
   bundledWebRuntime: false,
   plugins: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     SplashScreen: {
-      launchShowDuration: 3000,
+      launchShowDuration: 2000,
       launchAutoHide: true,
+      backgroundColor: 'ffffffff',
     },
   },
 };
