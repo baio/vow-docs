@@ -1,11 +1,16 @@
-<ion-content>
+<!--
+<ion-toolbar slot="secondary">
+  <ion-searchbar placeholder="найти" (ionChange)="onSearchChange($event)"></ion-searchbar>
+</ion-toolbar>
+-->
 
+
+<ion-content>
   <ion-toolbar slot="fixed">
     <ion-searchbar placeholder="найти" (ionChange)="onSearchChange($event)"></ion-searchbar>
   </ion-toolbar>
 
-
-  <ion-grid *ngIf="view$ | async as view">
+  <ion-grid style="margin-top: 30px;" *ngIf="view$ | async as view">
     <ion-row *ngFor="let row of view.rows; trackBy: trackByRow" class="list-row">
       <ion-col size="6">
         <ng-container *ngTemplateOutlet="col; context: { $implicit: row.first }"></ng-container>
@@ -17,16 +22,17 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="onFileSelected()">
       <ion-icon name="camera-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <ng-template #col let-doc>
-    <app-doc-list-image [imgBase64]="doc.imgBase64" [title]="getTitle(doc)" (click)="onDocClick(doc)">
-    </app-doc-list-image>
-  </ng-template>
-
 </ion-content>
+
+
+
+<ng-template #col let-doc>
+  <app-doc-list-image [imgBase64]="doc.imgBase64" [title]="getTitle(doc)" (click)="onDocClick(doc)">
+  </app-doc-list-image>
+</ng-template>
