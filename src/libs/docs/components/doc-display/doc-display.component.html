@@ -5,22 +5,8 @@
   </app-doc-image>
   <ion-card-content>
     <ng-container *ngFor="let field of docView?.fields || []">
-      <ng-container [ngSwitch]="getFieldType(field)">
-        <ng-container *ngSwitchCase="'one-col'">
-          <small>{{ field["label"] }}</small>
-          <p>{{ field["value"] }}</p>
-        </ng-container>
-        <ion-row *ngSwitchCase="'two-col'">
-          <ion-col col-6>
-            <small>{{ field["col1"].label }}</small>
-            <p>{{ field["col1"].value }}</p>
-          </ion-col>
-          <ion-col col-6>
-            <small>{{ field["col2"].label }}</small>
-            <p>{{ field["col2"].value }}</p>
-          </ion-col>
-        </ion-row>
-      </ng-container>
+      <small>{{ field["label"] }}</small>
+      <p>{{ field["value"] }}</p>
     </ng-container>
   </ion-card-content>
 </ion-card>

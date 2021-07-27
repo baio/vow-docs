@@ -1,6 +1,7 @@
-import { DocForm } from '../../../models';
+import { DocForm } from '../models';
 
 export const unknownForm: DocForm = {
+  title: 'Другое',
   fields: [
     {
       kind: 'text',

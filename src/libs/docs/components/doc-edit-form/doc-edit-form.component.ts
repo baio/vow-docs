@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { fromPairs } from 'lodash/fp';
+import { getDocForm } from '../../definitions';
 import {
   Doc,
   DocForm,
@@ -14,23 +15,9 @@ import {
   DocLabel,
   OptItem,
 } from '../../models';
-import { docFormRFPassport } from './form-definitions/passport-rf';
-import { unknownForm } from './form-definitions/unknown';
-import { docFormRFPassportForeign } from './form-definitions/passport-foreign-rf';
-import { docFormDriverLicenseRF } from './form-definitions/driver-license-rf';
-import { snilsRFForm } from './form-definitions/snils-rf';
-
 export interface UploadImageModalView {
   doc: Doc;
 }
-
-const docFormsHash = {
-  passportRF: docFormRFPassport,
-  passportForeignRF: docFormRFPassportForeign,
-  driverLicenseRF: docFormDriverLicenseRF,
-  snilsRF: snilsRFForm,
-  unknown: unknownForm,
-};
 
 const createForm = (formBuilder: FormBuilder, doc: DocForm) => {
   const formGroupConfig = fromPairs(
@@ -94,25 +81,7 @@ export class AppDocEditFormComponent implements OnInit {
   }
 
   private updateForm() {
-    switch (this.docLabel) {
-      case 'passport-rf':
-        this.docForm = docFormsHash.passportRF;
-        break;
-      case 'passport-foreign-rf':
-        this.docForm = docFormsHash.passportForeignRF;
-        break;
-      case 'driver-license-rf':
-        this.docForm = docFormsHash.driverLicenseRF;
-        break;
-      case 'snils-rf':
-        this.docForm = docFormsHash.snilsRF;
-        break;
-      case 'unknown':
-        this.docForm = docFormsHash.unknown;
-        break;
-      default:
-        this.docForm = null;
-    }
+    this.docForm = getDocForm(this.docLabel);
     if (!!this.docForm) {
       this.formGroup = createForm(this.fb, this.docForm);
       if (this.docFormatted) {

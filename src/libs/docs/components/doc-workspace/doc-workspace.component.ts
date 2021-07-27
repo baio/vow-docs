@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { v4 } from 'uuid';
+import { getDocForm } from '../../definitions';
 import { Doc, DocView } from '../../models';
 import {
   addDocAttachment,
@@ -29,7 +30,7 @@ import {
 } from '../../ngrx/actions';
 import { selectDocWithAttachments } from '../../ngrx/selectors';
 import { CameraService } from '../../services/camera.service';
-import { docFormattedToView } from '../../utils';
+import { docFormToView } from '../../utils';
 import { ImageClickEvent } from '../doc-image/doc-image.component';
 
 /**
@@ -86,7 +87,7 @@ export class AppDocWorkspaceComponent implements OnInit {
             ? ({
                 doc,
                 docView: doc.formatted
-                  ? docFormattedToView(doc.formatted)
+                  ? docFormToView(doc.formatted, getDocForm(doc.formatted.kind))
                   : null,
                 attachmentsBase64: attachments.map((m) => m.imgBase64),
                 cloudUploadStatus: socialAuthState

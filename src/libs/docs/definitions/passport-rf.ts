@@ -1,6 +1,7 @@
-import { DocForm } from '../../../models';
+import { DocForm } from '../models';
 
-export const snilsRFForm: DocForm = {
+export const passportRF: DocForm = {
+  title: 'Паспорт РФ',
   fields: [
     {
       kind: 'text',
@@ -23,19 +24,19 @@ export const snilsRFForm: DocForm = {
       label: 'Номер',
     },
     {
-      kind: 'select',
+      kind: 'text-area',
+      name: 'issuer',
+      label: 'Паспорт выдан',
+    },
+    {
+      kind: 'date',
+      name: 'issueDate',
+      label: 'Дата выдачи',
+    },
+    {
+      kind: 'sex',
       name: 'sex',
       label: 'Пол',
-      items: [
-        {
-          key: 'male',
-          label: 'мужской',
-        },
-        {
-          key: 'female',
-          label: 'женской',
-        },
-      ],
     },
     {
       kind: 'date',
@@ -46,6 +47,11 @@ export const snilsRFForm: DocForm = {
       kind: 'text-area',
       name: 'placeOfBirth',
       label: 'Место рождения',
+    },
+    {
+      kind: 'text',
+      name: 'departmentCode',
+      label: 'Код департамента',
     },
   ],
 };

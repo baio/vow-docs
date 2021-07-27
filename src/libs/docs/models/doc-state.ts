@@ -17,7 +17,7 @@ export type DocLabel =
   | 'driver-license-rf'
   | 'pts-rf'
   | 'kasko-rf'
-  | 'osgao-rf'
+  | 'osago-rf'
   | 'birth-certificate-rf'
   | 'inn-rf'
   | 'med-insurance-international-rf'

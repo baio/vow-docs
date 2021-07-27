@@ -148,7 +148,6 @@ export interface BirthCertificateRF {
   birthPlace: string;
   issueDate: string;
   authorityDate: string;
-  authorityNo: string;
   authority: string;
   fatherLastName: string;
   fatherFirstName: string;

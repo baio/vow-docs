@@ -1,6 +1,7 @@
-import { DocForm } from '../../../models';
+import { DocForm } from '../models';
 
-export const docFormDriverLicenseRF: DocForm = {
+export const passportForeignRF: DocForm = {
+  title: 'Загран РФ',
   fields: [
     {
       kind: 'text',
@@ -38,19 +39,24 @@ export const docFormDriverLicenseRF: DocForm = {
       label: 'Номер',
     },
     {
+      kind: 'select',
+      name: 'sex',
+      label: 'Пол / Sex',
+      items: [
+        {
+          key: 'male',
+          label: 'мужской/male',
+        },
+        {
+          key: 'female',
+          label: 'женский/female',
+        },
+      ],
+    },
+    {
       kind: 'date',
       name: 'dateOfBirth',
       label: 'Дата рождения / Date of Birth',
-    },
-    {
-      kind: 'text',
-      name: 'regionOfBirth',
-      label: 'Место рождения',
-    },
-    {
-      kind: 'text',
-      name: 'regionOfBirthEn',
-      label: 'Place of Birth',
     },
     {
       kind: 'date',
@@ -64,28 +70,23 @@ export const docFormDriverLicenseRF: DocForm = {
     },
     {
       kind: 'text',
+      name: 'placeOfBirth',
+      label: 'Место рождения',
+    },
+    {
+      kind: 'text',
+      name: 'placeOfBirthEn',
+      label: 'Place of Birth',
+    },
+    {
+      kind: 'text',
       name: 'issuer',
-      label: 'Орган, выдавший документ',
+      label: 'Орган, выдавший документ / Authority',
     },
     {
       kind: 'text',
-      name: 'issuerEn',
-      label: 'Authority',
-    },
-    {
-      kind: 'text',
-      name: 'issuerRegion',
-      label: 'Место выдачи',
-    },
-    {
-      kind: 'text',
-      name: 'issuerRegionEn',
-      label: 'Authority Location',
-    },
-    {
-      kind: 'text',
-      name: 'categories',
-      label: 'Категории / Categories',
+      name: 'type',
+      label: 'Тип / Type',
     },
   ],
 };

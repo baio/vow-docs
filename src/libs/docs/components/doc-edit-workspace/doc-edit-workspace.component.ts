@@ -52,6 +52,34 @@ export class AppDocEditWorkspaceComponent implements OnInit {
       key: 'driver-license-rf',
       label: 'Водительское РФ',
     },
+    {
+      key: 'pts-rf',
+      label: 'ПТС РФ',
+    },
+    {
+      key: 'kasko-rf',
+      label: 'КАСКО РФ',
+    },
+    {
+      key: 'osago-rf',
+      label: 'ОСАГО РФ',
+    },
+    {
+      key: 'birth-certificate-rf',
+      label: 'Свидетельство о Рождении РФ',
+    },
+    {
+      key: 'inn-rf',
+      label: 'ИНН РФ',
+    },
+    {
+      key: 'med-insurance-international-rf',
+      label: 'МЕЖДУНАРОДНАЯ МЕД СТРАХОВКА РФ',
+    },
+    {
+      key: 'med-insurance-rf',
+      label: 'МЕД СТРАХОВКА РФ',
+    },
   ];
 
   constructor(

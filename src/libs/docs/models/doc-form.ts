@@ -1,38 +1,44 @@
 import { OptItem } from './opt-item';
 
 export interface DocFormFieldBase {
-    name: string;
-    label: string;
+  name: string;
+  label: string;
 }
 
 export interface DocFormTextField extends DocFormFieldBase {
-    kind: 'text';
+  kind: 'text';
 }
 
 export interface DocFormNumberField extends DocFormFieldBase {
-    kind: 'number';
+  kind: 'number';
 }
 
 export interface DocFormDateField extends DocFormFieldBase {
-    kind: 'date';
+  kind: 'date';
 }
 
 export interface DocFormTextAreaField extends DocFormFieldBase {
-    kind: 'text-area';
+  kind: 'text-area';
 }
 
 export interface DocFormSelectField extends DocFormFieldBase {
-    kind: 'select';
-    items: OptItem[];
+  kind: 'select';
+  items: OptItem[];
+}
+
+export interface DocFormSexField extends DocFormFieldBase {
+  kind: 'sex';
 }
 
 export type DocFormField =
-    | DocFormTextField
-    | DocFormDateField
-    | DocFormNumberField
-    | DocFormTextAreaField
-    | DocFormSelectField;
+  | DocFormTextField
+  | DocFormDateField
+  | DocFormNumberField
+  | DocFormTextAreaField
+  | DocFormSelectField
+  | DocFormSexField;
 
 export interface DocForm {
-    fields: DocFormField[];
+  title: string;
+  fields: DocFormField[];
 }

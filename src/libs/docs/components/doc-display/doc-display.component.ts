@@ -5,7 +5,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { DocView, DocViewFieldOrRow } from '../../models';
+import { DocView } from '../../models';
 import { ImageClickEvent } from '../doc-image/doc-image.component';
 
 @Component({
@@ -23,12 +23,4 @@ export class AppDocDisplayComponent {
   @Output() linkClick = new EventEmitter();
   @Output() unlinkClick = new EventEmitter<number>();
   @Output() imageClick = new EventEmitter<ImageClickEvent>();
-
-  getFieldType(field: DocViewFieldOrRow): 'one-col' | 'two-col' {
-    if ('col1' in field) {
-      return 'two-col';
-    } else {
-      return 'one-col';
-    }
-  }
 }
