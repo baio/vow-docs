@@ -1,31 +1,29 @@
 import { format } from 'date-fns';
 import { DocSNILSRF, DocView } from '../../models';
+import { asDate, asStr, joinStr } from './utils';
 
-export const snilsRFForm = (doc: DocSNILSRF): DocView => ({
+export const snilsRF = (doc: DocSNILSRF): DocView => ({
   title: 'СНИЛС РФ',
   fields: [
     {
       label: 'Номер',
-      value: doc.identifier,
+      value: asStr(doc.identifier),
     },
     {
       label: 'Фамилия Имя Очество',
-      value:
-        doc.lastName || doc.firstName || doc.middleName
-          ? [doc.lastName, doc.firstName, doc.middleName].join(' ')
-          : null,
+      value: joinStr([doc.lastName, doc.firstName, doc.middleName]),
     },
     {
       label: 'Дата рождения / Date of birth',
-      value: doc.dateOfBirth && format(new Date(doc.dateOfBirth), 'dd.MM.yyyy'),
+      value: asDate(doc.dateOfBirth),
     },
     {
       label: 'Место рождения',
-      value: doc.placeOfBirth || '',
+      value: asStr(doc.placeOfBirth),
     },
     {
       label: 'Пол',
-      value: doc.sex ? (doc.sex === 'male' ? 'мужской' : 'женский') : null,
+      value: doc.sex ? (doc.sex === 'male' ? 'мужской' : 'женский') : '',
     },
   ],
 });

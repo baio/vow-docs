@@ -14,7 +14,14 @@ export type DocLabel =
   | 'unknown'
   | 'passport-foreign-rf'
   | 'snils-rf'
-  | 'driver-license-rf';
+  | 'driver-license-rf'
+  | 'pts-rf'
+  | 'kasko-rf'
+  | 'osgao-rf'
+  | 'birth-certificate-rf'
+  | 'inn-rf'
+  | 'med-insurance-international-rf'
+  | 'med-insurance-rf';
 
 export interface DocLabeled {
   label: DocLabel;

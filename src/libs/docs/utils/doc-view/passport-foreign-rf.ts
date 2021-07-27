@@ -1,26 +1,21 @@
 import { format } from 'date-fns';
 import { DocPassportForeignRF, DocView } from '../../models';
+import { asDate, asStr, joinStr } from './utils';
 
 export const passportForeignRF = (doc: DocPassportForeignRF): DocView => ({
   title: 'Загран РФ',
   fields: [
     {
       label: 'Номер паспорта / Passport No.',
-      value: doc.identifier,
+      value: asStr(doc.identifier),
     },
     {
       label: 'Фамилия Имя Очество',
-      value:
-        doc.lastName || doc.firstName || doc.middleName
-          ? [doc.lastName, doc.firstName, doc.middleName].join(' ')
-          : null,
+      value: joinStr([doc.lastName, doc.firstName, doc.middleName]),
     },
     {
       label: 'Surname and Given Names',
-      value:
-        doc.lastNameEn || doc.firstNameEn || doc.middleNameEn
-          ? [doc.lastNameEn, doc.firstNameEn, doc.middleNameEn].join(' ')
-          : null,
+      value: joinStr([doc.lastNameEn, doc.firstNameEn, doc.middleNameEn]),
     },
     {
       label: 'Место рождения / Place of Birth',
@@ -32,23 +27,23 @@ export const passportForeignRF = (doc: DocPassportForeignRF): DocView => ({
     },
     {
       label: 'Дата рождения / Date of birth',
-      value: doc.dateOfBirth && format(new Date(doc.dateOfBirth), 'dd.MM.yyyy'),
+      value: asDate(doc.dateOfBirth),
     },
     {
       label: 'Дата выдачи / Date of Issue',
-      value: doc.issueDate && format(new Date(doc.issueDate), 'dd.MM.yyyy'),
+      value: asDate(doc.issueDate),
     },
     {
       label: 'Дата окончания / Date of Expiry',
-      value: doc.expiryDate && format(new Date(doc.expiryDate), 'dd.MM.yyyy'),
+      value: asDate(doc.expiryDate),
     },
     {
       label: 'Орган Выдавший Документ / Authority',
-      value: doc.issuer,
+      value: asStr(doc.issuer),
     },
     {
       label: 'Тип / Type',
-      value: doc.type,
+      value: asStr(doc.type),
     },
   ],
 });

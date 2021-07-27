@@ -1,51 +1,49 @@
 import { format } from 'date-fns';
 import { DocDriverLicenseRF, DocView } from '../../models';
+import { asDate, asStr, joinStr } from './utils';
 
 export const driverLicenseRF = (doc: DocDriverLicenseRF): DocView => ({
   title: 'Водительское РФ',
   fields: [
     {
       label: 'Номер / No.',
-      value: doc.identifier,
+      value: asStr(doc.identifier),
     },
     {
       label: 'Фамилия Имя Очество',
-      value:
-        doc.lastName || doc.firstName || doc.middleName
-          ? [doc.lastName, doc.firstName, doc.middleName].join(' ')
-          : null,
+      value: joinStr([doc.lastName, doc.firstName, doc.middleName]),
     },
     {
       label: 'Surname and Given Names',
-      value:
-        doc.lastNameEn || doc.firstNameEn || doc.middleNameEn
-          ? [doc.lastNameEn, doc.firstNameEn, doc.middleNameEn].join(' ')
-          : null,
+      value: joinStr([doc.lastNameEn, doc.firstNameEn, doc.middleNameEn]),
     },
     {
       label: 'Дата рождения / Date of birth',
-      value: doc.dateOfBirth && format(new Date(doc.dateOfBirth), 'dd.MM.yyyy'),
+      value: asDate(doc.dateOfBirth),
     },
     {
       label: 'Место Рождения / Place of Birth',
-      value: `${doc.regionOfBirth}/${doc.regionOfBirthEn}`,
+      value: joinStr(
+        [asStr(doc.regionOfBirth), asStr(doc.regionOfBirthEn)],
+        '/'
+      ),
     },
     {
       label: 'Дата Выдачи / Date of Issue',
-      value: doc.issueDate && format(new Date(doc.issueDate), 'dd.MM.yyyy'),
+      value: asDate(doc.issueDate),
     },
     {
       label: 'Дата Окончания / Date of Expiry',
-      value: doc.expiryDate && format(new Date(doc.expiryDate), 'dd.MM.yyyy'),
+      value: asDate(doc.expiryDate),
     },
 
     {
       label: 'Регион / Region',
-      value: `${doc.issuerRegion}/${doc.issuerRegionEn}`,
+      value: joinStr([asStr(doc.issuerRegion), asStr(doc.issuerRegionEn)], '/'),
     },
     {
       label: 'Категории / Categories',
-      value: doc.categories || '',
+      value: asStr(doc.categories),
     },
   ],
 });

@@ -1,32 +1,30 @@
 import { DocPassportRF, DocView } from '../../models';
 import { format } from 'date-fns';
+import { asDate, asStr, joinStr } from './utils';
 
 export const passportRF = (doc: DocPassportRF): DocView => ({
   title: 'Паспорт РФ',
   fields: [
     {
       label: 'Фамилия Имя Очество',
-      value:
-        doc.lastName || doc.firstName || doc.middleName
-          ? [doc.lastName, doc.firstName, doc.middleName].join(' ')
-          : null,
+      value: joinStr([doc.lastName, doc.firstName, doc.middleName]),
     },
     {
       label: 'Серия Номер',
-      value: doc.identifier,
+      value: asStr(doc.identifier),
     },
     {
       label: 'Паспорт выдан',
-      value: doc.issuer,
+      value: asStr(doc.issuer),
     },
     {
       col1: {
         label: 'Дата выдачи',
-        value: doc.issueDate && format(new Date(doc.issueDate), 'dd.MM.yyyy'),
+        value: asDate(doc.issueDate),
       },
       col2: {
         label: 'Код подразделения',
-        value: doc.departmentCode,
+        value: asStr(doc.departmentCode),
       },
     },
     {
@@ -36,13 +34,12 @@ export const passportRF = (doc: DocPassportRF): DocView => ({
       },
       col2: {
         label: 'Дата рождения',
-        value:
-          doc.dateOfBirth && format(new Date(doc.dateOfBirth), 'dd.MM.yyyy'),
+        value: asDate(doc.dateOfBirth),
       },
     },
     {
       label: 'Место рождения',
-      value: doc.placeOfBirth,
+      value: asStr(doc.placeOfBirth),
     },
   ],
 });

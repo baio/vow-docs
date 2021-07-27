@@ -1,27 +1,25 @@
 import format from 'date-fns/format';
 import { DocUnknown, DocView } from '../../models';
+import { asDate, asStr, joinStr } from './utils';
 
 export const unknown = (doc: DocUnknown): DocView => ({
   title: 'Другое',
   fields: [
     {
       label: 'Фамилия Имя Очество',
-      value:
-        doc.lastName || doc.firstName || doc.middleName
-          ? [doc.lastName, doc.firstName, doc.middleName].join(' ')
-          : null,
+      value: joinStr([doc.lastName, doc.firstName, doc.middleName]),
     },
     {
       label: 'Номер',
-      value: doc.identifier,
+      value: asStr(doc.identifier),
     },
     {
       label: 'Дата',
-      value: doc.date && format(new Date(doc.date), 'dd.MM.yyyy'),
+      value: asDate(doc.date),
     },
     {
       label: 'Текст',
-      value: doc.text || null,
+      value: asStr(doc.text),
     },
   ],
 });
