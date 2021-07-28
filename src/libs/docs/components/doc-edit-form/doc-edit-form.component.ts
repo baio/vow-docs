@@ -55,6 +55,17 @@ export class AppDocEditFormComponent implements OnInit {
     'дек',
   ];
 
+  sexFields: OptItem[] = [
+    {
+      key: 'male',
+      label: 'мужской',
+    },
+    {
+      key: 'female',
+      label: 'женский',
+    },
+  ];
+
   @Input() set docLabel(val: DocLabel) {
     if (this._docLabel !== val) {
       this._docLabel = val;

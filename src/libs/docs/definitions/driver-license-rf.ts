@@ -13,31 +13,37 @@ export const driverLicenseRF: DocForm = {
       name: 'lastName',
       kind: 'text',
       label: 'Фамилия',
+      group: 'name',
     },
     {
       name: 'firstName',
       kind: 'text',
       label: 'Имя',
+      group: 'name',
     },
     {
       name: 'middleName',
       kind: 'text',
       label: 'Очество',
+      group: 'name',
     },
     {
       name: 'lastNameEn',
       kind: 'text',
       label: 'Last Name',
+      group: 'nameEn',
     },
     {
       name: 'firstNameEn',
       kind: 'text',
       label: 'First Name',
+      group: 'nameEn',
     },
     {
       name: 'middleNameEn',
       kind: 'text',
       label: 'Middle Name',
+      group: 'nameEn',
     },
     {
       label: 'Дата рождения / Date of birth',

@@ -7,16 +7,19 @@ export const medInsuranceRF: DocForm = {
       name: 'lastName',
       kind: 'text',
       label: 'Фамилия',
+      group: 'name',
     },
     {
       name: 'firstName',
       kind: 'text',
       label: 'Имя',
+      group: 'name',
     },
     {
       name: 'middleName',
       kind: 'text',
       label: 'Очество',
+      group: 'name',
     },
     {
       label: 'Персональный Номер',

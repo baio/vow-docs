@@ -7,16 +7,19 @@ export const snilsRF: DocForm = {
       kind: 'text',
       name: 'lastName',
       label: 'Фамилия',
+      group: 'name',
     },
     {
       kind: 'text',
       name: 'firstName',
       label: 'Имя',
+      group: 'name',
     },
     {
       kind: 'text',
       name: 'middleName',
       label: 'Отчество',
+      group: 'name',
     },
     {
       kind: 'number',
@@ -24,19 +27,9 @@ export const snilsRF: DocForm = {
       label: 'Номер',
     },
     {
-      kind: 'select',
+      kind: 'sex',
       name: 'sex',
       label: 'Пол',
-      items: [
-        {
-          key: 'male',
-          label: 'мужской',
-        },
-        {
-          key: 'female',
-          label: 'женской',
-        },
-      ],
     },
     {
       kind: 'date',
