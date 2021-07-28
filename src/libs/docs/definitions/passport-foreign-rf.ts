@@ -29,8 +29,8 @@ export const passportForeignRF: DocForm = {
     },
     {
       kind: 'text',
-      name: 'middleName',
-      label: 'Отчество',
+      name: 'lastNameEn',
+      label: 'Last Name',
       group: 'nameEn',
     },
     {
