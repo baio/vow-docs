@@ -21,6 +21,7 @@ import { docsReducer } from './ngrx/reducer';
 import { DocsRepositoryService } from './repository/docs.repository';
 import { AppDocListImageComponent } from './components/doc-list-image/doc-list-image.component';
 import { CameraService } from './services/camera.service';
+import { AppDocDisplayContentComponent } from './components/doc-display-content/doc-display-content.component';
 
 @NgModule({
   imports: [
@@ -44,6 +45,7 @@ import { CameraService } from './services/camera.service';
     AppDocEditFormComponent,
     AppFullScreenImageComponent,
     AppDocTagsComponent,
+    AppDocDisplayContentComponent,
   ],
   providers: [DocsRepositoryService, CameraService],
   exports: [AppDocumentsWorkspaceComponent, AppDocEditWorkspaceComponent],

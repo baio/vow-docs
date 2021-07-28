@@ -9,7 +9,7 @@ const PIN_KEY = 'VOW_DOCS_PIN_KEY';
 
 @Injectable()
 export class AuthService {
-  readonly isAuthenticated$ = new BehaviorSubject(false);
+  readonly isAuthenticated$ = new BehaviorSubject(true);
 
   constructor(private readonly secureStorageService: SecureStorageService) {}
 
