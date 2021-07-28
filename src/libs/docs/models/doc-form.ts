@@ -3,6 +3,7 @@ import { OptItem } from './opt-item';
 export interface DocFormFieldBase {
   name: string;
   label: string;
+  group?: string | number;
 }
 
 export interface DocFormTextField extends DocFormFieldBase {

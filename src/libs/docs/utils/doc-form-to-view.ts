@@ -1,4 +1,6 @@
 import { format } from 'date-fns';
+import { Dictionary } from 'lodash';
+import { groupBy } from 'lodash/fp';
 import {
   DocForm,
   DocFormatted,
@@ -40,18 +42,41 @@ const formatFormFieldValue = (formField: DocFormField, val: string): string => {
 };
 
 const docFormFieldToDocViewField =
-  (docFormatted: DocFormatted) =>
-  (field: DocFormField): DocViewField => ({
-    label: field.label,
-    value: docFormatted[field.name]
-      ? formatFormFieldValue(field, docFormatted[field.name])
-      : '',
-  });
+  (groups: Dictionary<DocFormField[]>, docFormatted: DocFormatted) =>
+  (field: DocFormField): DocViewField => {
+    const group = field.group ? groups[field.group] : null;
+    if (group) {
+      const fieldGroupIndex = group.findIndex((f) => f.name === field.name);
+      if (fieldGroupIndex === 0) {
+        return {
+          label: joinStr(group.map((f) => f.label)),
+          value: joinStr(
+            group.map((f) => formatFormFieldValue(f, docFormatted[f.name]))
+          ),
+        };
+      } else {
+        return { label: field.label, value: null };
+      }
+    } else {
+      return {
+        label: field.label,
+        value: docFormatted[field.name]
+          ? formatFormFieldValue(field, docFormatted[field.name])
+          : '',
+      };
+    }
+  };
 
-export const docFormToView = (docFormatted: DocFormatted, docForm: DocForm) =>
-  ({
+const getGroups = (docForm: DocForm) => {
+  const grouped = groupBy('group', docForm.fields);
+  return grouped;
+};
+export const docFormToView = (docFormatted: DocFormatted, docForm: DocForm) => {
+  const groups = getGroups(docForm);
+  return {
     title: docForm.title,
     fields: docForm.fields
-      .map(docFormFieldToDocViewField(docFormatted))
+      .map(docFormFieldToDocViewField(groups, docFormatted))
       .filter((f) => !!f.value),
-  } as DocView);
+  } as DocView;
+};

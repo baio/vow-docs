@@ -7,16 +7,19 @@ export const passportRF: DocForm = {
       kind: 'text',
       name: 'lastName',
       label: 'Фамилия',
+      group: 'name',
     },
     {
       kind: 'text',
       name: 'firstName',
       label: 'Имя',
+      group: 'name',
     },
     {
       kind: 'text',
       name: 'middleName',
       label: 'Отчество',
+      group: 'name',
     },
     {
       kind: 'number',
